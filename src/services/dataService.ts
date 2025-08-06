@@ -49,7 +49,11 @@ export class DataService {
       const mockPrices: { [key: string]: number } = {
         'hyperliquid': 19.3,
         'jupiter-exchange-solana': 0.6,
-        'aave': 192.0
+        'aave': 192.0,
+        'jito-governance-token': 5.0,
+        'pump-fun-token': 0.165,
+        'debridge': 6.0,
+        'fluid-tokens': 6.0
       };
       return mockPrices[coingeckoId] || 1;
     }
@@ -102,7 +106,7 @@ export class DataService {
         return buybackData;
       } else {
         // Fallback to fetching fresh data if no DB data
-        const tokens = ['HYPE', 'JUP', 'AAVE'];
+        const tokens = ['HYPE', 'JUP', 'AAVE', 'JTO', 'PUMP', 'DBR', 'FLUID'];
         const promises = tokens.map(token => this.getBuybackData(token));
         const data = await Promise.all(promises);
         
@@ -114,7 +118,7 @@ export class DataService {
     } catch (error) {
       console.error('Error getting buyback data:', error);
       // Fallback to mock data
-      const tokens = ['HYPE', 'JUP', 'AAVE'];
+      const tokens = ['HYPE', 'JUP', 'AAVE', 'JTO', 'PUMP', 'DBR', 'FLUID'];
       const promises = tokens.map(token => this.getBuybackData(token));
       return Promise.all(promises);
     }

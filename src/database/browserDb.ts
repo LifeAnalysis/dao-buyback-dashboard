@@ -42,12 +42,33 @@ export class DatabaseService {
     this.initializeWithSampleData();
   }
 
+  public forceRefresh(): void {
+    // Clear existing data and regenerate
+    localStorage.removeItem(this.BUYBACK_KEY);
+    localStorage.removeItem(this.HISTORICAL_KEY);
+    this.generateSampleData();
+  }
+
   private initializeWithSampleData(): void {
     // Check if data already exists
     const existingBuyback = localStorage.getItem(this.BUYBACK_KEY);
     const existingHistorical = localStorage.getItem(this.HISTORICAL_KEY);
     
-    if (!existingBuyback || !existingHistorical) {
+    // Check if we have the correct number of protocols (should be 7)
+    let needsRefresh = false;
+    if (existingBuyback) {
+      try {
+        const data = JSON.parse(existingBuyback);
+        const uniqueProtocols = new Set(data.map((item: any) => item.protocol));
+        if (uniqueProtocols.size < 7) {
+          needsRefresh = true;
+        }
+      } catch (e) {
+        needsRefresh = true;
+      }
+    }
+    
+    if (!existingBuyback || !existingHistorical || needsRefresh) {
       this.generateSampleData();
     }
   }
