@@ -161,7 +161,7 @@ export const CoinGeckoDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-white font-mono">DAOGecko</h1>
-                  <p className="text-xs text-gray-400 font-mono">Token Buyback Analytics</p>
+                  <p className="text-xs text-gray-400 font-mono">DAO Treasury Management & Token Buyback Analytics</p>
                 </div>
               </div>
             </div>
@@ -209,6 +209,27 @@ export const CoinGeckoDashboard: React.FC = () => {
               <div className="text-xs text-gray-400 mb-1">JUP Dominance</div>
               <div className="font-semibold text-white">{globalStats.ethDominance}%</div>
             </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Description Section */}
+      <motion.div 
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+      >
+        <div className="dark-card">
+          <div className="text-center">
+            <h2 className="text-lg font-semibold text-white mb-3 font-mono">
+              🏛️ DAO Treasury Management Dashboard
+            </h2>
+            <p className="text-sm text-gray-300 leading-relaxed max-w-4xl mx-auto">
+              Explore comprehensive analytics on how decentralized autonomous organizations (DAOs) manage their treasuries through strategic token buybacks. 
+              Track real-time buyback activities, treasury allocations, and supply reduction strategies across major protocols like Hyperliquid, Jupiter, and Aave. 
+              This dashboard provides insights into how DAOs optimize tokenomics, reduce circulating supply, and create value for token holders through systematic treasury management.
+            </p>
           </div>
         </div>
       </motion.div>
