@@ -66,6 +66,24 @@ export const ProtocolLogo: React.FC<ProtocolLogoProps> = ({
           </div>
         );
       
+      case 'DeBridge':
+        return (
+          <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center shadow-lg`}>
+            <svg viewBox="0 0 24 24" className="w-2/3 h-2/3 text-white" fill="currentColor">
+              <path d="M17 7l-10 10M7 7l10 10M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0"/>
+            </svg>
+          </div>
+        );
+      
+      case 'Fluid':
+        return (
+          <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg`}>
+            <svg viewBox="0 0 24 24" className="w-2/3 h-2/3 text-white" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.19 0 2.34-.21 3.41-.6.3-.11.49-.4.49-.72 0-.43-.35-.78-.78-.78-.22 0-.42.09-.56.24-.78.28-1.6.43-2.46.43-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6c0 .86-.15 1.68-.43 2.46-.15.14-.24.34-.24.56 0 .43.35.78.78.78.32 0 .61-.19.72-.49.39-1.07.6-2.22.6-3.41 0-5.52-4.48-10-10-10z"/>
+            </svg>
+          </div>
+        );
+      
       default:
         return (
           <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center shadow-lg`}>
@@ -99,7 +117,9 @@ export const ProtocolLogoImage: React.FC<ProtocolLogoProps> = ({
     'Jupiter': 'https://assets.coingecko.com/coins/images/33547/standard/jupiter.png',
     'Aave': 'https://assets.coingecko.com/coins/images/12645/standard/AAVE.png',
     'Jito': 'https://assets.coingecko.com/coins/images/32592/standard/jto.png',
-    'Pump.fun': 'https://pump.fun/icon.png'
+    'Pump.fun': 'https://pump.fun/icon.png',
+    'DeBridge': 'https://assets.coingecko.com/coins/images/27840/standard/debridge.png',
+    'Fluid': 'https://assets.coingecko.com/coins/images/10393/standard/INST.png'
   };
 
   const renderFallback = () => (

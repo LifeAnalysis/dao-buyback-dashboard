@@ -55,6 +55,8 @@ export const CoinGeckoDashboard: React.FC = () => {
       case 'Aave': return '#B6509E';
       case 'Jito': return '#FF6B35';
       case 'Pump.fun': return '#FF1493';
+      case 'DeBridge': return '#4A90E2';
+      case 'Fluid': return '#00BFFF';
       default: return '#16a34a';
     }
   };
@@ -76,13 +78,15 @@ export const CoinGeckoDashboard: React.FC = () => {
     const totalMarketCap = buybackData.reduce((sum, data) => sum + data.totalValueUSD * 10, 0);
     const total24hVolume = buybackData.reduce((sum, data) => sum + data.estimatedAnnualBuyback / 365, 0);
     const totalCoins = buybackData.length;
+    const totalTokensBoughtBack = buybackData.reduce((sum, data) => sum + data.totalRepurchased, 0);
+    const totalRevenue = buybackData.reduce((sum, data) => sum + data.totalValueUSD, 0);
     
     return {
       totalMarketCap,
       total24hVolume,
       totalCoins,
-      btcDominance: 45.2,
-      ethDominance: 18.7
+      totalTokensBoughtBack,
+      totalRevenue
     };
   };
 
@@ -204,12 +208,12 @@ export const CoinGeckoDashboard: React.FC = () => {
               <div className="font-semibold text-white">{formatCurrency(globalStats.total24hVolume)}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 mb-1">HYPE Dominance</div>
-              <div className="font-semibold text-white">{globalStats.btcDominance}%</div>
+              <div className="text-xs text-gray-400 mb-1">Tokens Bought Back</div>
+              <div className="font-semibold text-white">{(globalStats.totalTokensBoughtBack / 1000000).toFixed(1)}M</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 mb-1">JUP Dominance</div>
-              <div className="font-semibold text-white">{globalStats.ethDominance}%</div>
+              <div className="text-xs text-gray-400 mb-1">Total Revenue</div>
+              <div className="font-semibold text-white">{formatCurrency(globalStats.totalRevenue)}</div>
             </div>
           </div>
         </div>
@@ -297,35 +301,7 @@ export const CoinGeckoDashboard: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Trending */}
-            <motion.div 
-              className="dark-card"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              <h3 className="text-lg font-semibold text-white mb-4 font-mono">🔥 Trending</h3>
-              <div className="space-y-3">
-                {buybackData.slice(0, 3).map((protocol, index) => (
-                  <div key={protocol.protocol} className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-400">{index + 1}</span>
-                    <ProtocolLogoImage protocol={protocol.protocol} size="sm" />
-                    <div className="flex-1">
-                      <div className="font-medium text-white">{protocol.protocol}</div>
-                      <div className="text-sm text-gray-400">{protocol.token}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-white font-mono">
-                        {formatCurrency(protocol.totalValueUSD / 1000000)}M
-                      </div>
-                      <div className="text-xs text-[#00ff87]">
-                        +{(Math.random() * 20).toFixed(1)}%
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+
 
 
           </div>
@@ -430,6 +406,37 @@ export const CoinGeckoDashboard: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Legal Disclaimer */}
+        <motion.div 
+          className="mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+        >
+          <div className="dark-card border-t-2 border-yellow-500/20">
+            <div className="flex items-start gap-3">
+              <div className="mt-1">
+                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-yellow-500 mb-2 font-mono">Legal Disclaimer</h4>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Any references to token purchases are for informational purposes only, and only describe historical activity. 
+                  This information should not be understood as a commitment to future token purchases for any reason. 
+                  Any purchases may have the effect of preventing or retarding a decline in the market price of tokens and may stabilize, 
+                  maintain or otherwise affect the market price of the tokens. As a result, the market price of the tokens may be higher 
+                  than the price that otherwise might exist. Entities affiliated with the pump platform may purchase or sell tokens from 
+                  time to time, but are not under no obligation to do so. If any purchases occur in the future, any such activity may be 
+                  initiated, suspended, modified, or discontinued at any time, with or without notice. No token purchaser, holder or seller 
+                  should rely on past purchases as an indication of future token purchases.
+                </p>
+              </div>
             </div>
           </div>
         </motion.div>

@@ -35,6 +35,20 @@ export const PROTOCOLS: ProtocolConfig[] = [
     color: '#FF1493',
     icon: '💎',
     coingeckoId: 'pump-fun-token'
+  },
+  {
+    name: 'DeBridge',
+    token: 'DBR',
+    color: '#4A90E2',
+    icon: '🌉',
+    coingeckoId: 'debridge'
+  },
+  {
+    name: 'Fluid',
+    token: 'FLUID',
+    color: '#00BFFF',
+    icon: '💧',
+    coingeckoId: 'fluid-tokens'
   }
 ];
 
@@ -112,6 +126,36 @@ export const MOCK_BUYBACK_DATA = {
       { month: 'Jan 2025', amount: 11000000, valueUSD: 1810000 },
       { month: 'Feb 2025', amount: 12500000, valueUSD: 2056000 },
       { month: 'Mar 2025', amount: 14200000, valueUSD: 2337000 }
+    ]
+  },
+  'DBR': {
+    protocol: 'DeBridge',
+    token: 'DBR',
+    totalRepurchased: 2500000,
+    totalValueUSD: 15000000,
+    circulatingSupplyPercent: 1.5,
+    estimatedAnnualBuyback: 45000000,
+    feeAllocationPercent: 60,
+    lastUpdated: '2025-04-01',
+    monthlyData: [
+      { month: 'Jan 2025', amount: 180000, valueUSD: 1080000 },
+      { month: 'Feb 2025', amount: 220000, valueUSD: 1320000 },
+      { month: 'Mar 2025', amount: 280000, valueUSD: 1680000 }
+    ]
+  },
+  'FLUID': {
+    protocol: 'Fluid',
+    token: 'FLUID',
+    totalRepurchased: 5200000,
+    totalValueUSD: 31200000,
+    circulatingSupplyPercent: 3.2,
+    estimatedAnnualBuyback: 95000000,
+    feeAllocationPercent: 80,
+    lastUpdated: '2025-04-01',
+    monthlyData: [
+      { month: 'Jan 2025', amount: 420000, valueUSD: 2520000 },
+      { month: 'Feb 2025', amount: 510000, valueUSD: 3060000 },
+      { month: 'Mar 2025', amount: 590000, valueUSD: 3540000 }
     ]
   }
 };
