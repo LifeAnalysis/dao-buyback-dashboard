@@ -171,6 +171,8 @@ interface ProtocolTableProps {
   sortOrder: SortOrder;
   onProtocolSelect: (protocol: string) => void;
   onSort: (column: SortOption) => void;
+  onSortByChange: (sortBy: SortOption) => void;
+  onSortOrderChange: (sortOrder: SortOrder) => void;
 }
 
 const ProtocolTable = React.memo<ProtocolTableProps>(({
@@ -179,7 +181,9 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
   sortBy,
   sortOrder,
   onProtocolSelect,
-  onSort
+  onSort,
+  onSortByChange,
+  onSortOrderChange
 }) => {
   const SortIcon = ({ column }: { column: SortOption }) => (
     sortBy === column ? (
@@ -206,7 +210,50 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
     >
       <div className="dark-card overflow-hidden">
         <div className="px-6 py-4" style={{ borderBottom: '1px solid #1a1a1a' }}>
-          <h3 className="text-lg font-semibold text-white font-mono">Protocol Buyback Rankings</h3>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 className="text-lg font-semibold text-white font-mono">Protocol Buyback Rankings</h3>
+            
+            {/* Filter Controls */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-400 font-mono">Sort by:</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => onSortByChange(e.target.value as SortOption)}
+                  className="px-3 py-1 text-sm text-white border border-gray-600 rounded font-mono focus:outline-none transition-colors"
+                  style={{ 
+                    backgroundColor: THEME_COLORS.MEDIUM_BLACK,
+                    borderColor: 'focus:' + THEME_COLORS.PRIMARY_GREEN
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = THEME_COLORS.PRIMARY_GREEN}
+                  onBlur={(e) => e.target.style.borderColor = '#4b5563'}
+                >
+                  <option value="buybackValue">Buyback Value</option>
+                  <option value="revenue">Protocol Revenue</option>
+                  <option value="tokensBought">Tokens Bought</option>
+                  <option value="change">Supply Reduced</option>
+                </select>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-400 font-mono">Order:</label>
+                <select
+                  value={sortOrder}
+                  onChange={(e) => onSortOrderChange(e.target.value as SortOrder)}
+                  className="px-3 py-1 text-sm text-white border border-gray-600 rounded font-mono focus:outline-none transition-colors"
+                  style={{ 
+                    backgroundColor: THEME_COLORS.MEDIUM_BLACK,
+                    borderColor: 'focus:' + THEME_COLORS.PRIMARY_GREEN
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = THEME_COLORS.PRIMARY_GREEN}
+                  onBlur={(e) => e.target.style.borderColor = '#4b5563'}
+                >
+                  <option value="desc">Highest First</option>
+                  <option value="asc">Lowest First</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -223,8 +270,26 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   onClick={() => onSort('marketCap')}
                 >
                   <div className="flex items-center gap-1">
-                    Total Buybacks
+                    Buyback Value
                     <SortIcon column="marketCap" />
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors font-mono"
+                  onClick={() => onSort('volume')}
+                >
+                  <div className="flex items-center gap-1">
+                    Protocol Revenue
+                    <SortIcon column="volume" />
+                  </div>
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors font-mono"
+                  onClick={() => onSort('change')}
+                >
+                  <div className="flex items-center gap-1">
+                    Tokens Bought
+                    <SortIcon column="change" />
                   </div>
                 </th>
                 <th 
@@ -238,9 +303,6 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider font-mono">
                   Fee Allocation
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider font-mono">
-                  24h Change
                 </th>
               </tr>
             </thead>
@@ -274,6 +336,12 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-mono">
                     {formatCurrency(protocol.totalValueUSD)}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-mono">
+                    {formatCurrency(protocol.estimatedAnnualBuyback * 0.15)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-mono">
+                    {formatTokenAmount(protocol.totalRepurchased)}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-medium font-mono" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>
                       {protocol.circulatingSupplyPercent}%
@@ -281,11 +349,6 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-mono">
                     {protocol.feeAllocationPercent}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium font-mono" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>
-                      +{(Math.random() * 15).toFixed(2)}%
-                    </span>
                   </td>
                 </tr>
               ))}
@@ -507,6 +570,8 @@ export const OptimizedDashboard: React.FC = () => {
             sortOrder={state.sortOrder}
             onProtocolSelect={handleProtocolSelect}
             onSort={handleSort}
+            onSortByChange={(sortBy) => setState(prev => ({ ...prev, sortBy }))}
+            onSortOrderChange={(sortOrder) => setState(prev => ({ ...prev, sortOrder }))}
           />
         </div>
       </div>

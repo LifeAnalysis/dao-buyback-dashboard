@@ -90,10 +90,10 @@ const BrandLogo = memo(() => (
 BrandLogo.displayName = 'BrandLogo';
 
 /**
- * Credits component
+ * Credits component with proper alignment
  */
 const Credits = memo(() => (
-  <div className="text-xs text-gray-500 font-mono">
+  <div className="text-xs text-gray-500 font-mono whitespace-nowrap">
     Powered by <span className="text-[#00ff87] font-semibold">{BRANDING.POWERED_BY}</span>
   </div>
 ));
@@ -119,9 +119,10 @@ export const Header = memo<HeaderProps>(({ isOnline = true, className = '' }) =>
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 w-full">
           {/* Left: Brand Logo */}
           <motion.div
+            className="flex-shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ 
@@ -134,7 +135,7 @@ export const Header = memo<HeaderProps>(({ isOnline = true, className = '' }) =>
 
           {/* Right: Status and Credits */}
           <motion.div
-            className="flex items-center gap-4"
+            className="flex items-center gap-4 flex-shrink-0"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ 

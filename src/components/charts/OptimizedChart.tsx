@@ -329,11 +329,7 @@ export const OptimizedChart = memo<ChartProps>(({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={(value: number) => {
-                  const chartType = activeChart as ChartType;
-                  const formatter = chartType === 'tokensBought' ? formatVolume : formatCurrency;
-                  return formatter(value);
-                }}
+                tickFormatter={formatCurrency}
                 width={80}
                 tickMargin={5}
                 domain={['dataMin * 0.95', 'dataMax * 1.05']}
