@@ -19,8 +19,6 @@ import { Header } from './layout/Header';
 import { Footer } from './layout/Footer';
 import { OptimizedChart } from './charts/OptimizedChart';
 import { ProtocolLogoImage } from './ProtocolLogo';
-import { MetricsContainer } from './MetricsContainer';
-import { TimeframeOption } from './TimeframeSelector';
 import type { 
   BuybackData, 
   GlobalStats, 
@@ -402,9 +400,6 @@ export const OptimizedDashboard: React.FC = () => {
     lastUpdated: null,
   });
 
-  // Additional UI state
-  const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeOption>('30D');
-
   const dataService = OptimizedDataService.getInstance();
 
   // Memoized calculations
@@ -445,34 +440,6 @@ export const OptimizedDashboard: React.FC = () => {
       }))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [state.historicalData, state.selectedProtocol]);
-
-  // Metrics data for the selected protocol
-  const metricsData = useMemo(() => {
-    const protocolData = state.buybackData.find(p => p.protocol === state.selectedProtocol);
-    if (!protocolData) {
-      return {
-        buybackValue: 0,
-        protocolRevenue: 0,
-        tokensBought: 0,
-        change24h: {
-          buybackValue: 0,
-          protocolRevenue: 0,
-          tokensBought: 0,
-        }
-      };
-    }
-
-    return {
-      buybackValue: protocolData.totalValueUSD,
-      protocolRevenue: protocolData.totalValueUSD * 0.15, // Estimated 15% revenue from buybacks
-      tokensBought: protocolData.totalRepurchased,
-      change24h: {
-        buybackValue: Math.random() * 20 - 10, // Mock 24h change data
-        protocolRevenue: Math.random() * 15 - 7.5,
-        tokensBought: Math.random() * 25 - 12.5,
-      }
-    };
-  }, [state.buybackData, state.selectedProtocol]);
 
   // Event handlers
   const fetchData = useCallback(async () => {
@@ -516,11 +483,6 @@ export const OptimizedDashboard: React.FC = () => {
       sortBy: column,
       sortOrder: prev.sortBy === column && prev.sortOrder === 'desc' ? 'asc' : 'desc',
     }));
-  }, []);
-
-  const handleTimeframeChange = useCallback((timeframe: TimeframeOption) => {
-    setSelectedTimeframe(timeframe);
-    // TODO: Implement data refetching based on timeframe
   }, []);
 
   // Effects
@@ -574,16 +536,6 @@ export const OptimizedDashboard: React.FC = () => {
 
       {/* Description Section */}
       <DescriptionSection />
-
-      {/* Metrics Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <MetricsContainer
-          data={metricsData}
-          selectedTimeframe={selectedTimeframe}
-          onTimeframeChange={handleTimeframeChange}
-          className="py-8"
-        />
-      </div>
 
       {/* Main Content */}
       <div className="flex-1">
