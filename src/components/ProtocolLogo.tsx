@@ -48,6 +48,24 @@ export const ProtocolLogo: React.FC<ProtocolLogoProps> = ({
           </div>
         );
       
+      case 'Jito':
+        return (
+          <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center shadow-lg`}>
+            <svg viewBox="0 0 24 24" className="w-2/3 h-2/3 text-white" fill="currentColor">
+              <path d="M13 3L4 14h6l-1 4 9-11h-6l1-4z"/>
+            </svg>
+          </div>
+        );
+      
+      case 'Pump.fun':
+        return (
+          <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg`}>
+            <svg viewBox="0 0 24 24" className="w-2/3 h-2/3 text-white" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+        );
+      
       default:
         return (
           <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center shadow-lg`}>
@@ -79,7 +97,9 @@ export const ProtocolLogoImage: React.FC<ProtocolLogoProps> = ({
   const logoUrls = {
     'Hyperliquid': 'https://assets.coingecko.com/coins/images/38481/standard/hyperliquid.png',
     'Jupiter': 'https://assets.coingecko.com/coins/images/33547/standard/jupiter.png',
-    'Aave': 'https://assets.coingecko.com/coins/images/12645/standard/AAVE.png'
+    'Aave': 'https://assets.coingecko.com/coins/images/12645/standard/AAVE.png',
+    'Jito': 'https://assets.coingecko.com/coins/images/32592/standard/jto.png',
+    'Pump.fun': 'https://pump.fun/icon.png'
   };
 
   const renderFallback = () => (

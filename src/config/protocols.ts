@@ -21,6 +21,20 @@ export const PROTOCOLS: ProtocolConfig[] = [
     color: '#B6509E',
     icon: '👻',
     coingeckoId: 'aave'
+  },
+  {
+    name: 'Jito',
+    token: 'JTO',
+    color: '#FF6B35',
+    icon: '⚡',
+    coingeckoId: 'jito-governance-token'
+  },
+  {
+    name: 'Pump.fun',
+    token: 'PUMP',
+    color: '#FF1493',
+    icon: '💎',
+    coingeckoId: 'pump-fun-token'
   }
 ];
 
@@ -68,6 +82,36 @@ export const MOCK_BUYBACK_DATA = {
       { month: 'Jan 2025', amount: 8000, valueUSD: 1536000 },
       { month: 'Feb 2025', amount: 12000, valueUSD: 2304000 },
       { month: 'Mar 2025', amount: 15000, valueUSD: 2880000 }
+    ]
+  },
+  'JTO': {
+    protocol: 'Jito',
+    token: 'JTO',
+    totalRepurchased: 8500000,
+    totalValueUSD: 42500000,
+    circulatingSupplyPercent: 2.1,
+    estimatedAnnualBuyback: 180000000,
+    feeAllocationPercent: 75,
+    lastUpdated: '2025-04-01',
+    monthlyData: [
+      { month: 'Jan 2025', amount: 600000, valueUSD: 3000000 },
+      { month: 'Feb 2025', amount: 850000, valueUSD: 4250000 },
+      { month: 'Mar 2025', amount: 950000, valueUSD: 4750000 }
+    ]
+  },
+  'PUMP': {
+    protocol: 'Pump.fun',
+    token: 'PUMP',
+    totalRepurchased: 143814000,
+    totalValueUSD: 23711464,
+    circulatingSupplyPercent: 0.445,
+    estimatedAnnualBuyback: 75000000,
+    feeAllocationPercent: 95,
+    lastUpdated: '2025-04-01',
+    monthlyData: [
+      { month: 'Jan 2025', amount: 11000000, valueUSD: 1810000 },
+      { month: 'Feb 2025', amount: 12500000, valueUSD: 2056000 },
+      { month: 'Mar 2025', amount: 14200000, valueUSD: 2337000 }
     ]
   }
 };

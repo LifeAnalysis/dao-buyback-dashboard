@@ -53,6 +53,8 @@ export const CoinGeckoDashboard: React.FC = () => {
       case 'Hyperliquid': return '#00D4AA';
       case 'Jupiter': return '#FFA500';
       case 'Aave': return '#B6509E';
+      case 'Jito': return '#FF6B35';
+      case 'Pump.fun': return '#FF1493';
       default: return '#16a34a';
     }
   };

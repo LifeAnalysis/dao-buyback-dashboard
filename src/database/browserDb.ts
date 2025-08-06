@@ -56,7 +56,9 @@ export class DatabaseService {
     const protocols = [
       { name: 'Hyperliquid', token: 'HYPE', basePrice: 19.3, baseVolume: 1200000000 },
       { name: 'Jupiter', token: 'JUP', basePrice: 0.6, baseVolume: 850000000 },
-      { name: 'Aave', token: 'AAVE', basePrice: 192, baseVolume: 45000000 }
+      { name: 'Aave', token: 'AAVE', basePrice: 192, baseVolume: 45000000 },
+      { name: 'Jito', token: 'JTO', basePrice: 5.0, baseVolume: 320000000 },
+      { name: 'Pump.fun', token: 'PUMP', basePrice: 0.165, baseVolume: 180000000 }
     ];
 
     const buybackRecords: BuybackRecord[] = [];
@@ -66,7 +68,9 @@ export class DatabaseService {
     let cumulativeData: { [key: string]: { value: number; tokens: number } } = {
       'Hyperliquid': { value: 350000000, tokens: 18000000 },
       'Jupiter': { value: 24000000, tokens: 42000000 },
-      'Aave': { value: 20000000, tokens: 115000 }
+      'Aave': { value: 20000000, tokens: 115000 },
+      'Jito': { value: 35000000, tokens: 7500000 },
+      'Pump.fun': { value: 20000000, tokens: 125000000 }
     };
 
     for (let i = 30; i >= 0; i--) {
@@ -92,6 +96,14 @@ export class DatabaseService {
           feePercent = 50;
           dailyBuybackUSD = (volume * 0.0001 * 0.5);
           dailyTokens = dailyBuybackUSD / price;
+        } else if (protocol.name === 'Jito') {
+          feePercent = 75;
+          dailyBuybackUSD = (volume * 0.00015 * 0.75);
+          dailyTokens = dailyBuybackUSD / price;
+        } else if (protocol.name === 'Pump.fun') {
+          feePercent = 95;
+          dailyBuybackUSD = (volume * 0.0003 * 0.95);
+          dailyTokens = dailyBuybackUSD / price;
         } else { // Aave
           feePercent = 100;
           dailyBuybackUSD = Math.min(1000000 / 7, volume * 0.0004);
@@ -110,8 +122,8 @@ export class DatabaseService {
           timestamp,
           total_repurchased: cumulativeData[protocol.name].tokens,
           total_value_usd: cumulativeData[protocol.name].value,
-          circulating_supply_percent: protocol.name === 'Hyperliquid' ? 6.2 : protocol.name === 'Jupiter' ? 3.6 : 0.8,
-          estimated_annual_buyback: protocol.name === 'Hyperliquid' ? 600000000 : protocol.name === 'Jupiter' ? 250000000 : 52000000,
+          circulating_supply_percent: protocol.name === 'Hyperliquid' ? 6.2 : protocol.name === 'Jupiter' ? 3.6 : protocol.name === 'Jito' ? 2.1 : protocol.name === 'Pump.fun' ? 0.445 : 0.8,
+          estimated_annual_buyback: protocol.name === 'Hyperliquid' ? 600000000 : protocol.name === 'Jupiter' ? 250000000 : protocol.name === 'Jito' ? 180000000 : protocol.name === 'Pump.fun' ? 75000000 : 52000000,
           fee_allocation_percent: feePercent,
           price_per_token: price,
           trading_volume_24h: volume,
