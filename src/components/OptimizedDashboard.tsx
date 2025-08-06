@@ -21,7 +21,6 @@ import { OptimizedChart } from './charts/OptimizedChart';
 import { ProtocolLogoImage } from './ProtocolLogo';
 import type { 
   BuybackData, 
-  HistoricalDataPoint, 
   GlobalStats, 
   SortOption, 
   SortOrder,
@@ -127,9 +126,17 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
           onClick={() => onProtocolSelect(protocol.protocol)}
           className={`w-full text-left p-3 rounded-lg transition-all ${
             selectedProtocol === protocol.protocol
-              ? 'border border-[#00ff87] bg-[#00ff87]/10'
+              ? 'border bg-opacity-10 hover:bg-opacity-20'
               : 'border border-transparent hover:bg-[#1a1a1a]'
           }`}
+          style={
+            selectedProtocol === protocol.protocol
+              ? {
+                  borderColor: THEME_COLORS.PRIMARY_GREEN,
+                  backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}1a`
+                }
+              : {}
+          }
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -143,7 +150,7 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
               <div className="font-medium text-white font-mono">
                 {formatCurrency(protocol.totalValueUSD)}
               </div>
-              <div className="text-sm text-[#00ff87]">+{protocol.circulatingSupplyPercent}%</div>
+              <div className="text-sm" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>+{protocol.circulatingSupplyPercent}%</div>
             </div>
           </div>
         </button>
@@ -212,7 +219,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   Protocol
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-[#00ff87] transition-colors font-mono"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors font-mono"
                   onClick={() => onSort('marketCap')}
                 >
                   <div className="flex items-center gap-1">
@@ -221,7 +228,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   </div>
                 </th>
                 <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-[#00ff87] transition-colors font-mono"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors font-mono"
                   onClick={() => onSort('change')}
                 >
                   <div className="flex items-center gap-1">
@@ -248,7 +255,10 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                     <div className="flex items-center">
                       <span className="mr-2">{index + 1}</span>
                       {selectedProtocol === protocol.protocol && (
-                        <div className="w-2 h-2 rounded-full bg-[#00ff87]" />
+                        <div 
+                          className="w-2 h-2 rounded-full" 
+                          style={{ background: THEME_COLORS.PRIMARY_GREEN }}
+                        />
                       )}
                     </div>
                   </td>
@@ -265,7 +275,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                     {formatCurrency(protocol.totalValueUSD)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-[#00ff87] font-mono">
+                    <span className="text-sm font-medium font-mono" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>
                       {protocol.circulatingSupplyPercent}%
                     </span>
                   </td>
@@ -273,7 +283,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                     {protocol.feeAllocationPercent}%
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-[#00ff87] font-mono">
+                    <span className="text-sm font-medium font-mono" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>
                       +{(Math.random() * 15).toFixed(2)}%
                     </span>
                   </td>
@@ -300,7 +310,10 @@ const LoadingSpinner = React.memo(() => (
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: ANIMATION_DURATIONS.NORMAL }}
     >
-      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#00ff87] mx-auto mb-6" />
+      <div 
+        className="animate-spin rounded-full h-16 w-16 border-b-4 mx-auto mb-6" 
+        style={{ borderBottomColor: THEME_COLORS.PRIMARY_GREEN }}
+      />
       <p className="text-gray-300 text-lg font-mono">Loading market data...</p>
     </motion.div>
   </div>
@@ -328,13 +341,12 @@ export const OptimizedDashboard: React.FC = () => {
 
   // Memoized calculations
   const globalStats = useMemo((): GlobalStats => {
-    const { buybackData } = state;
     return {
-      totalCoins: buybackData.length,
-      totalMarketCap: buybackData.reduce((sum, data) => sum + data.totalValueUSD * 10, 0),
-      total24hVolume: buybackData.reduce((sum, data) => sum + data.estimatedAnnualBuyback / 365, 0),
-      totalTokensBoughtBack: buybackData.reduce((sum, data) => sum + data.totalRepurchased, 0),
-      totalRevenue: buybackData.reduce((sum, data) => sum + data.totalValueUSD, 0),
+      totalCoins: state.buybackData.length,
+      totalMarketCap: state.buybackData.reduce((sum, data) => sum + data.totalValueUSD * 10, 0),
+      total24hVolume: state.buybackData.reduce((sum, data) => sum + data.estimatedAnnualBuyback / 365, 0),
+      totalTokensBoughtBack: state.buybackData.reduce((sum, data) => sum + data.totalRepurchased, 0),
+      totalRevenue: state.buybackData.reduce((sum, data) => sum + data.totalValueUSD, 0),
     };
   }, [state.buybackData]);
 
@@ -358,9 +370,9 @@ export const OptimizedDashboard: React.FC = () => {
       .filter(item => item.protocol === state.selectedProtocol)
       .map(item => ({
         timestamp: item.timestamp,
-        price: item.cumulative_value ? item.cumulative_value / item.cumulative_tokens! : item.price,
-        volume: item.value_usd || item.volume,
-        marketCap: item.cumulative_value ? item.cumulative_value * 0.8 : item.marketCap,
+        buybacks: item.cumulative_value || item.value_usd || 0,  // Total buyback value
+        revenue: (item.cumulative_value || 0) * 0.15,           // Estimated revenue (15% of buybacks)
+        tokensBought: item.cumulative_tokens || 0,              // Number of tokens bought
         change24h: item.change24h || Math.random() * 20 - 10,
       }))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -427,7 +439,16 @@ export const OptimizedDashboard: React.FC = () => {
           <p className="text-gray-400 mb-4">{state.error}</p>
           <button 
             onClick={fetchData}
-            className="px-4 py-2 bg-[#00ff87] text-black rounded-lg hover:bg-[#00e67a] transition-colors"
+            className="px-4 py-2 text-black rounded-lg transition-colors"
+            style={{ 
+              background: THEME_COLORS.PRIMARY_GREEN,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = THEME_COLORS.SECONDARY_GREEN;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = THEME_COLORS.PRIMARY_GREEN;
+            }}
           >
             Retry
           </button>

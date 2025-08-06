@@ -3,7 +3,7 @@
  */
 
 import { VALIDATION_LIMITS, PROTOCOL_COLORS, PROTOCOL_TOKENS, COINGECKO_IDS } from '../constants';
-import type { ProtocolToken, SortOption, SortOrder } from '../constants';
+import type { ProtocolToken, SortOrder } from '../constants';
 
 /**
  * Type guards and validation functions

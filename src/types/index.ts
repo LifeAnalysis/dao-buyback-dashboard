@@ -1,5 +1,8 @@
 import type { ProtocolToken, SortOption, SortOrder, LogoSize } from '../constants';
 
+// Re-export types from constants for easier imports
+export type { ProtocolToken, SortOption, SortOrder, LogoSize };
+
 /**
  * Core data interfaces
  */
@@ -44,9 +47,9 @@ export interface HistoricalDataPoint {
 
 export interface ChartDataPoint {
   timestamp: string;
-  price: number;
-  volume: number;
-  marketCap: number;
+  buybacks: number;      // USD value of buybacks
+  revenue: number;       // Protocol revenue  
+  tokensBought: number;  // Number of tokens bought back
   change24h: number;
 }
 

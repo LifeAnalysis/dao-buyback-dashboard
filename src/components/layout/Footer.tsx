@@ -5,7 +5,7 @@
 
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { LEGAL_DISCLAIMER, BRANDING, THEME_COLORS, ANIMATION_DELAYS, ANIMATION_DURATIONS } from '../../constants';
+import { LEGAL_DISCLAIMER, THEME_COLORS, ANIMATION_DELAYS, ANIMATION_DURATIONS } from '../../constants';
 
 interface FooterProps {
   className?: string;
@@ -58,72 +58,7 @@ const LegalDisclaimer = memo(() => (
 
 LegalDisclaimer.displayName = 'LegalDisclaimer';
 
-/**
- * Footer links and information
- */
-const FooterInfo = memo(() => {
-  const currentYear = new Date().getFullYear();
-  
-  return (
-    <motion.div 
-      className="py-6 border-t border-gray-800"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ 
-        duration: ANIMATION_DURATIONS.SLOW,
-        delay: ANIMATION_DELAYS.VERY_LONG + 0.2 
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          {/* Left: Copyright and branding */}
-          <div className="text-center md:text-left">
-            <p className="text-sm text-gray-400">
-              © {currentYear} {BRANDING.APP_NAME}. All rights reserved.
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Powered by {BRANDING.POWERED_BY} • Built for the DeFi community
-            </p>
-          </div>
-          
-          {/* Right: Links and social */}
-          <div className="flex items-center gap-6 text-sm">
-            <a 
-              href="#privacy" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </a>
-            <a 
-              href="#terms" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Terms of Service
-            </a>
-            <a 
-              href="#contact" 
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Contact
-            </a>
-          </div>
-        </div>
-        
-        {/* Additional info */}
-        <div className="mt-4 pt-4 border-t border-gray-800">
-          <div className="text-center">
-            <p className="text-xs text-gray-500 leading-relaxed max-w-4xl mx-auto">
-              {BRANDING.DESCRIPTION} Data is aggregated from multiple sources and may not reflect real-time market conditions. 
-              Always conduct your own research before making investment decisions.
-            </p>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-});
 
-FooterInfo.displayName = 'FooterInfo';
 
 /**
  * Main Footer Component
@@ -145,8 +80,7 @@ export const Footer = memo<FooterProps>(({
           </div>
         )}
         
-        {/* Footer Information */}
-        <FooterInfo />
+
       </div>
     </footer>
   );

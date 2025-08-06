@@ -30,21 +30,59 @@ const LiveStatusIndicator = memo(({ isOnline = true }: { isOnline?: boolean }) =
 LiveStatusIndicator.displayName = 'LiveStatusIndicator';
 
 /**
- * Brand logo component
+ * Brand logo component with sophisticated design
  */
 const BrandLogo = memo(() => (
   <div className="flex items-center gap-3">
-    <div 
-      className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" 
-      style={{ 
-        background: `linear-gradient(135deg, ${THEME_COLORS.PRIMARY_GREEN}, ${THEME_COLORS.SECONDARY_GREEN})` 
-      }}
-    >
-      <span className="text-black font-bold text-lg font-mono">D</span>
+    <div className="relative">
+      {/* Main logo container */}
+      <div 
+        className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden" 
+        style={{ 
+          background: `linear-gradient(135deg, ${THEME_COLORS.PRIMARY_GREEN}, ${THEME_COLORS.SECONDARY_GREEN})` 
+        }}
+      >
+        {/* Treasury/Vault icon */}
+        <svg 
+          width="28" 
+          height="28" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          className="text-black"
+        >
+          {/* Building/Treasury structure */}
+          <rect x="2" y="8" width="20" height="12" rx="1" fill="currentColor" opacity="0.9"/>
+          <rect x="4" y="10" width="2" height="6" fill={THEME_COLORS.BLACK} opacity="0.8"/>
+          <rect x="7" y="10" width="2" height="6" fill={THEME_COLORS.BLACK} opacity="0.8"/>
+          <rect x="10" y="10" width="2" height="6" fill={THEME_COLORS.BLACK} opacity="0.8"/>
+          <rect x="13" y="10" width="2" height="6" fill={THEME_COLORS.BLACK} opacity="0.8"/>
+          <rect x="16" y="10" width="2" height="6" fill={THEME_COLORS.BLACK} opacity="0.8"/>
+          {/* Roof/Top */}
+          <path d="M1 8L12 2L23 8H1Z" fill="currentColor"/>
+          {/* Central vault door */}
+          <circle cx="12" cy="14" r="2" fill={THEME_COLORS.BLACK} opacity="0.9"/>
+          <circle cx="12" cy="14" r="1" fill="currentColor" opacity="0.3"/>
+        </svg>
+        
+        {/* Animated glow effect */}
+        <div 
+          className="absolute inset-0 rounded-xl opacity-20 animate-pulse"
+          style={{ 
+            background: `radial-gradient(circle at center, ${THEME_COLORS.PRIMARY_GREEN}, transparent)` 
+          }} 
+        />
+      </div>
+      
+      {/* Small indicator dot */}
+      <div 
+        className="absolute -top-1 -right-1 w-3 h-3 rounded-full animate-pulse"
+        style={{ background: THEME_COLORS.PRIMARY_GREEN }}
+      />
     </div>
+    
     <div>
-      <h1 className="text-2xl font-bold text-white font-mono">{BRANDING.APP_NAME}</h1>
-      <p className="text-xs text-gray-400 font-mono">{BRANDING.TAGLINE}</p>
+      <h1 className="text-2xl font-bold text-white font-mono tracking-tight">{BRANDING.APP_NAME}</h1>
+      <p className="text-xs text-gray-400 font-mono tracking-wide">{BRANDING.TAGLINE}</p>
     </div>
   </div>
 ));

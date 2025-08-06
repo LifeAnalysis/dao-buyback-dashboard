@@ -24,10 +24,10 @@ import {
   THEME_COLORS 
 } from '../../constants';
 import { formatCurrency, formatVolume, formatChartDate } from '../../utils/formatters';
-import type { ChartProps, ChartDataPoint } from '../../types';
+import type { ChartProps } from '../../types';
 
-// Chart type options
-type ChartType = 'price' | 'marketCap' | 'volume';
+// Chart type options focused on DAO treasury metrics
+type ChartType = 'buybacks' | 'revenue' | 'tokensBought';
 type TimeframeOption = '1D' | '7D' | '30D' | '90D' | '1Y';
 
 const TIMEFRAME_OPTIONS: TimeframeOption[] = ['1D', '7D', '30D', '90D', '1Y'];
@@ -35,16 +35,28 @@ const CHART_TYPE_OPTIONS: Array<{
   key: ChartType;
   label: string;
   color: string;
+  description: string;
 }> = [
-  { key: 'price', label: 'Price', color: '#16a34a' },
-  { key: 'marketCap', label: 'Market Cap', color: '#2563eb' },
-  { key: 'volume', label: 'Volume', color: '#dc2626' }
+  { key: 'buybacks', label: 'Buyback Value', color: '#00ff87', description: 'Total USD value of token buybacks' },
+  { key: 'revenue', label: 'Protocol Revenue', color: '#16a34a', description: 'Revenue generated from protocol fees' },
+  { key: 'tokensBought', label: 'Tokens Bought', color: '#2563eb', description: 'Number of tokens purchased back' }
 ];
 
 /**
  * Custom tooltip component for better performance
  */
-const CustomTooltip = memo<any>(({ active, payload, label }) => {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    color: string;
+    name: string;
+    value: number;
+    dataKey: string;
+  }>;
+  label?: string;
+}
+
+const CustomTooltip = memo<TooltipProps>(({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null;
 
   return (
@@ -57,12 +69,15 @@ const CustomTooltip = memo<any>(({ active, payload, label }) => {
       }}
     >
       <p className="text-xs font-mono mb-2" style={{ color: CHART_COLORS.PRIMARY }}>
-        {formatChartDate(label)}
+        {label ? formatChartDate(label) : 'No date'}
       </p>
-      {payload.map((entry: any, index: number) => (
+      {payload.map((entry, index: number) => (
         <p key={index} className="text-xs font-mono" style={{ color: entry.color }}>
           {`${entry.name}: ${
-            entry.name === 'Volume' ? formatVolume(entry.value) : formatCurrency(entry.value)
+            (() => {
+              const formatter = entry.dataKey === 'tokensBought' ? formatVolume : formatCurrency;
+              return formatter(entry.value);
+            })()
           }`}
         </p>
       ))}
@@ -103,7 +118,11 @@ const ChartHeader = memo<ChartHeaderProps>(({
         <h3 className="text-xl font-bold text-white mb-2 font-mono">{title}</h3>
         <div className="flex items-center gap-4">
           <span className="text-2xl font-bold text-white font-mono">
-            {activeChart === 'volume' ? formatVolume(currentValue) : formatCurrency(currentValue)}
+            {(() => {
+              const chartType = activeChart as ChartType;
+              const formatter = chartType === 'tokensBought' ? formatVolume : formatCurrency;
+              return formatter(currentValue);
+            })()}
           </span>
           <span 
             className={`text-sm font-medium px-2 py-1 rounded font-mono ${
@@ -120,11 +139,12 @@ const ChartHeader = memo<ChartHeaderProps>(({
       {/* Controls */}
       <div className="flex flex-col sm:flex-row gap-3">
         {/* Chart type selector */}
-        <div className="flex gap-2">
-          {CHART_TYPE_OPTIONS.map(({ key, label, color }) => (
+        <div className="flex flex-wrap gap-2">
+          {CHART_TYPE_OPTIONS.map(({ key, label, color, description }) => (
             <button
               key={key}
               onClick={() => onChartTypeChange(key)}
+              title={description}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors font-mono ${
                 activeChart === key
                   ? 'text-black border'
@@ -185,7 +205,7 @@ export const OptimizedChart = memo<ChartProps>(({
   height = CHART_HEIGHTS.LARGE,
   showVolume = true
 }) => {
-  const [activeChart, setActiveChart] = useState<ChartType>('price');
+  const [activeChart, setActiveChart] = useState<ChartType>('buybacks');
   const [timeframe, setTimeframe] = useState<TimeframeOption>('30D');
 
   // Memoized calculations
@@ -264,7 +284,7 @@ export const OptimizedChart = memo<ChartProps>(({
       {/* Chart Container */}
       <div style={{ height }} className="w-full">
         <ResponsiveContainer width="100%" height="100%">
-          {showVolume && activeChart === 'price' ? (
+          {showVolume && activeChart === 'buybacks' ? (
             <ComposedChart 
               data={chartData} 
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -300,7 +320,7 @@ export const OptimizedChart = memo<ChartProps>(({
               />
               
               <YAxis
-                yAxisId="price"
+                yAxisId="primary"
                 orientation="right"
                 axisLine={false}
                 tickLine={false}
@@ -309,14 +329,18 @@ export const OptimizedChart = memo<ChartProps>(({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={formatCurrency}
+                tickFormatter={(value: number) => {
+                  const chartType = activeChart as ChartType;
+                  const formatter = chartType === 'tokensBought' ? formatVolume : formatCurrency;
+                  return formatter(value);
+                }}
                 width={80}
                 tickMargin={5}
                 domain={['dataMin * 0.95', 'dataMax * 1.05']}
               />
               
               <YAxis
-                yAxisId="volume"
+                yAxisId="secondary"
                 orientation="left"
                 axisLine={false}
                 tickLine={false}
@@ -337,17 +361,17 @@ export const OptimizedChart = memo<ChartProps>(({
               />
               
               <Bar
-                yAxisId="volume"
-                dataKey="volume"
-                fill="#e5e7eb"
-                opacity={0.3}
+                yAxisId="secondary"
+                dataKey="revenue"
+                fill="#16a34a"
+                opacity={0.4}
                 radius={[2, 2, 0, 0]}
               />
               
               <Area
-                yAxisId="price"
+                yAxisId="primary"
                 type="monotone"
-                dataKey="price"
+                dataKey={activeChart}
                 stroke={color}
                 strokeWidth={2}
                 fill={`url(#${gradientId})`}
@@ -398,7 +422,11 @@ export const OptimizedChart = memo<ChartProps>(({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={activeChart === 'volume' ? formatVolume : formatCurrency}
+                tickFormatter={(value: number) => {
+                  const chartType = activeChart as ChartType;
+                  const formatter = chartType === 'tokensBought' ? formatVolume : formatCurrency;
+                  return formatter(value);
+                }}
                 width={80}
                 tickMargin={5}
                 domain={['dataMin * 0.95', 'dataMax * 1.05']}

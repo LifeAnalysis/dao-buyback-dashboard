@@ -8,17 +8,13 @@ import {
   PROTOCOL_TOKENS, 
   COINGECKO_IDS, 
   MOCK_PRICES, 
-  BASE_VOLUMES,
-  DAILY_ACTIVE_USERS,
   API_ENDPOINTS,
   API_TIMEOUTS,
   CACHE_DURATIONS,
   EXPECTED_PROTOCOL_COUNT 
 } from '../constants';
 import { 
-  formatCurrency, 
-  formatDate,
-  getRelativeTime 
+  formatDate
 } from '../utils/formatters';
 import {
   isValidProtocolToken,
@@ -27,16 +23,13 @@ import {
   createError,
   isNetworkError,
   createCacheKey,
-  isCacheExpired,
-  safeLocalStorageGet,
-  safeLocalStorageSet
+  isCacheExpired
 } from '../utils/helpers';
 import { DatabaseService } from '../database/browserDb';
 import type { 
   BuybackData, 
   ProtocolToken, 
   CacheEntry, 
-  ApiResponse,
   AppError,
   ErrorCode 
 } from '../types';
@@ -178,7 +171,8 @@ export class OptimizedDataService {
   private validatePriceData(price: number, token: string): number {
     if (!isValidPrice(price)) {
       console.warn(`Invalid price for ${token}: ${price}, using mock data`);
-      const coingeckoId = COINGECKO_IDS[token as ProtocolToken];
+      const validToken = token as ProtocolToken;
+      const coingeckoId = COINGECKO_IDS[validToken];
       return MOCK_PRICES[coingeckoId as keyof typeof MOCK_PRICES] || 1;
     }
     return price;
@@ -256,12 +250,12 @@ export class OptimizedDataService {
     }
 
     try {
-      // Get current price
-      const currentPrice = await this.getTokenPrice(validToken);
+      // Get current price (for future use when integrating real price data)
+      await this.getTokenPrice(validToken);
       
       // Get mock buyback data from config
       const mockData = await import('../config/protocols');
-      const protocolData = mockData.MOCK_BUYBACK_DATA[validToken];
+      const protocolData = (mockData.MOCK_BUYBACK_DATA as any)[validToken];
       
       if (!protocolData) {
         throw createError(`No mock data available for ${validToken}`, 'VALIDATION_ERROR');
@@ -347,7 +341,7 @@ export class OptimizedDataService {
     }
 
     try {
-      const historicalData = this.dbService.getHistoricalChartData(protocol, days);
+      const historicalData = this.dbService.getHistoricalData(protocol, days);
       this.setCacheEntry(cacheKey, historicalData);
       return historicalData;
 
