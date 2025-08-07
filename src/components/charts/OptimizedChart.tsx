@@ -338,6 +338,10 @@ export const OptimizedChart = memo<ChartProps>(({
                   <stop offset="5%" stopColor={color} stopOpacity={0.3} />
                   <stop offset="95%" stopColor={color} stopOpacity={0} />
                 </linearGradient>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#16a34a" stopOpacity={0.9}/>
+                  <stop offset="100%" stopColor="#16a34a" stopOpacity={0.3}/>
+                </linearGradient>
               </defs>
               
               <CartesianGrid
