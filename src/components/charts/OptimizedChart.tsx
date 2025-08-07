@@ -20,8 +20,7 @@ import {
   CHART_COLORS, 
   CHART_HEIGHTS, 
   ANIMATION_DURATIONS, 
-  ANIMATION_DELAYS,
-  THEME_COLORS 
+  ANIMATION_DELAYS
 } from '../../constants';
 import { formatCurrency, formatVolume, formatChartDateByTimeframe } from '../../utils/formatters';
 import { filterDataByTimeframe, getOptimalTickCount, type TimeframeOption } from '../../utils/helpers';

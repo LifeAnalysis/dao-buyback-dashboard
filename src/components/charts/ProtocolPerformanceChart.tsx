@@ -386,7 +386,7 @@ export const ProtocolPerformanceChart = memo<ProtocolPerformanceChartProps>(({
                   strokeDasharray="5 5"
                   strokeWidth={1}
                   opacity={0.7}
-                  label={{ value: "Average", position: "top", fill: "#f59e0b" }}
+                  label={{ value: "Avg", fill: "#f59e0b", fontSize: 12 }}
                 />
                 <ReferenceLine
                   y={median}
@@ -394,7 +394,7 @@ export const ProtocolPerformanceChart = memo<ProtocolPerformanceChartProps>(({
                   strokeDasharray="3 3"
                   strokeWidth={1}
                   opacity={0.7}
-                  label={{ value: "Median", position: "top", fill: "#8b5cf6" }}
+                  label={{ value: "Med", fill: "#8b5cf6", fontSize: 12 }}
                 />
               </>
             )}

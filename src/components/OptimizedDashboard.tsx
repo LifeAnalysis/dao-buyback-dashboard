@@ -613,6 +613,19 @@ export const OptimizedDashboard: React.FC = () => {
       {/* Global Market Stats */}
       <GlobalStatsSection stats={globalStats} />
 
+      {/* Protocol Performance Overview - Strategic Top Position */}
+      <div className="bg-gray-950/50 border-b border-gray-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <ProtocolPerformanceChart
+            data={state.buybackData}
+            title="Protocol Performance Comparison"
+            height={320}
+            showComparisons={true}
+            metric="totalValueUSD"
+          />
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -638,16 +651,7 @@ export const OptimizedDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Enhanced Protocol Performance Chart */}
-          <div className="mt-8">
-            <ProtocolPerformanceChart
-              data={state.buybackData}
-              title="Protocol Performance Comparison"
-              height={350}
-              showComparisons={true}
-              metric="totalValueUSD"
-            />
-          </div>
+
 
           {/* Protocol Table */}
           <ProtocolTable
