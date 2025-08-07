@@ -45,27 +45,37 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: ANIMATION_DELAYS.SHORT, duration: ANIMATION_DURATIONS.NORMAL }}
   >
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 lg:gap-x-12">
-        <div className="text-center min-w-[120px]">
-          <div className="text-xs text-gray-400 mb-1 font-mono">Protocols</div>
-          <div className="font-semibold text-white text-lg">{stats.totalCoins}</div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="group">
+          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Protocols</div>
+          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
+            {stats.totalCoins}
+          </div>
         </div>
-        <div className="text-center min-w-[140px]">
-          <div className="text-xs text-gray-400 mb-1 font-mono">Total Market Cap</div>
-          <div className="font-semibold text-white text-lg">{formatCurrency(stats.totalMarketCap)}</div>
+        <div className="group">
+          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Market Cap</div>
+          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
+            {formatCurrency(stats.totalMarketCap)}
+          </div>
         </div>
-        <div className="text-center min-w-[120px]">
-          <div className="text-xs text-gray-400 mb-1 font-mono">24h Volume</div>
-          <div className="font-semibold text-white text-lg">{formatCurrency(stats.total24hVolume)}</div>
+        <div className="group">
+          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">24h Volume</div>
+          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
+            {formatCurrency(stats.total24hVolume)}
+          </div>
         </div>
-        <div className="text-center min-w-[140px]">
-          <div className="text-xs text-gray-400 mb-1 font-mono">Tokens Bought Back</div>
-          <div className="font-semibold text-white text-lg">{formatTokenAmount(stats.totalTokensBoughtBack)}M</div>
+        <div className="group">
+          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Tokens Bought</div>
+          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
+            {formatTokenAmount(stats.totalTokensBoughtBack)}M
+          </div>
         </div>
-        <div className="text-center min-w-[120px]">
-          <div className="text-xs text-gray-400 mb-1 font-mono">Total Revenue</div>
-          <div className="font-semibold text-white text-lg">{formatCurrency(stats.totalRevenue)}</div>
+        <div className="group">
+          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Revenue</div>
+          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
+            {formatCurrency(stats.totalRevenue)}
+          </div>
         </div>
       </div>
     </div>
@@ -79,20 +89,21 @@ GlobalStatsSection.displayName = 'GlobalStatsSection';
  */
 const DescriptionSection = React.memo(() => (
   <motion.div 
-    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: ANIMATION_DELAYS.MEDIUM, duration: ANIMATION_DURATIONS.NORMAL }}
   >
-    <div className="dark-card">
-      <div className="text-center">
-        <h2 className="text-lg font-semibold text-white mb-3 font-mono">
-          🏛️ DAO Buybacks
+    <div className="text-center bg-gradient-to-r from-[#0a0a0a] via-[#111] to-[#0a0a0a] rounded-lg border border-gray-800/50 p-4">
+      <div className="flex items-center justify-center gap-3 mb-2">
+        <div className="text-2xl">🏛️</div>
+        <h2 className="text-lg font-bold text-white font-mono tracking-tight">
+          DAO Buybacks
         </h2>
-        <p className="text-sm text-gray-300 leading-relaxed max-w-4xl mx-auto">
-          {BRANDING.DESCRIPTION}
-        </p>
       </div>
+      <p className="text-sm text-gray-400 max-w-3xl mx-auto leading-relaxed">
+        {BRANDING.DESCRIPTION}
+      </p>
     </div>
   </motion.div>
 ));
