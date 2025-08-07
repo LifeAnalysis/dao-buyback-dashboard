@@ -83,13 +83,10 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Compact Header with Description */}
       <div className="text-center mb-6">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-xl">🏛️</span>
-          <h1 className="text-xl font-bold text-white" style={{ fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-            Treasury Analytics
-          </h1>
-        </div>
-        <p className="text-xs text-gray-400 max-w-2xl mx-auto">
+        <h1 className="text-2xl font-semibold text-white mb-2">
+          Treasury Analytics
+        </h1>
+        <p className="text-sm text-gray-400 max-w-2xl mx-auto">
           Strategic token buybacks across leading decentralized autonomous organizations
         </p>
       </div>
@@ -99,31 +96,31 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           <div className="group text-center">
                             <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">DAOs</div>
-            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+            <div className="font-semibold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
               {stats.totalCoins}
             </div>
           </div>
           <div className="group text-center">
             <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Market Cap</div>
-            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+            <div className="font-semibold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
               {formatCurrency(stats.totalMarketCap)}
             </div>
           </div>
           <div className="group text-center">
             <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">24h Volume</div>
-            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+            <div className="font-semibold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
               {formatCurrency(stats.total24hVolume)}
             </div>
           </div>
           <div className="group text-center">
             <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Tokens Bought</div>
-            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+            <div className="font-semibold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
               {formatTokenAmount(stats.totalTokensBoughtBack)}M
             </div>
           </div>
           <div className="group text-center">
             <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Revenue</div>
-            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+            <div className="font-semibold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
               {formatCurrency(stats.totalRevenue)}
             </div>
           </div>
@@ -152,49 +149,59 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
   onProtocolSelect
 }) => (
   <motion.div 
-    className="dark-card"
+    className="bg-gray-900/40 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6"
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: ANIMATION_DELAYS.LONG, duration: ANIMATION_DURATIONS.NORMAL }}
   >
-    <h3 className="text-lg font-semibold text-white mb-4 font-mono">Select DAO</h3>
-    <div className="space-y-2">
+    <h3 className="text-xl font-semibold text-white mb-6 font-mono">Select DAO</h3>
+    <div className="space-y-3">
       {protocols.map((protocol) => (
         <button
           key={protocol.protocol}
           onClick={() => onProtocolSelect(protocol.protocol)}
-          className={`w-full text-left p-4 rounded-lg transition-all ${
+          className={`w-full text-left p-5 rounded-xl transition-all duration-200 ${
             selectedProtocol === protocol.protocol
-              ? 'border bg-opacity-10 hover:bg-opacity-20'
-              : 'border border-transparent hover:bg-[#1a1a1a]'
+              ? 'border bg-opacity-15 hover:bg-opacity-25'
+              : 'border border-gray-700/50 hover:border-gray-600/70 hover:bg-gray-800/30'
           }`}
           style={
             selectedProtocol === protocol.protocol
               ? {
                   borderColor: THEME_COLORS.PRIMARY_GREEN,
-                  backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}1a`
+                  backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}26`
                 }
               : {}
           }
         >
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3 flex-1">
-              <ProtocolLogoImage protocol={protocol.protocol} size="md" />
-              <div className="flex-1">
-                <div className="font-medium text-white">{protocol.protocol}</div>
-                <div className="text-sm text-gray-400">{protocol.token}</div>
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <div className="flex-shrink-0">
+                <ProtocolLogoImage protocol={protocol.protocol} size="md" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-white text-base leading-tight">
+                  {protocol.protocol}
+                </div>
+                <div className="text-sm text-gray-400 mt-1">
+                  {protocol.token}
+                </div>
               </div>
             </div>
-            <div className="text-right flex-shrink-0 min-w-[120px]">
-              <div className="font-medium text-white font-mono text-sm">
+            <div className="text-right flex-shrink-0 min-w-[140px]">
+              <div className="font-semibold text-white font-mono text-base leading-tight">
                 {formatCurrency(protocol.totalValueUSD)}
               </div>
-              <div className="text-xs mt-1" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>+{protocol.circulatingSupplyPercent}%</div>
+              <div 
+                className="text-sm font-medium mt-1"
+                style={{ color: THEME_COLORS.PRIMARY_GREEN }}
+              >
+                +{protocol.circulatingSupplyPercent}%
+              </div>
             </div>
           </div>
         </button>
       ))}
-
     </div>
   </motion.div>
 ));
@@ -609,7 +616,7 @@ export const OptimizedDashboard: React.FC = () => {
     <div className="min-h-screen bg-black flex flex-col">
 
 
-      {/* 📊 MARKET OVERVIEW HERO SECTION */}
+      {/* MARKET OVERVIEW HERO SECTION */}
       <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-black border-b border-gray-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
@@ -629,7 +636,7 @@ export const OptimizedDashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* 📈 DAO PERFORMANCE MATRIX */}
+      {/* DAO PERFORMANCE MATRIX */}
       <section className="bg-gray-950/30 border-b border-gray-800/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <motion.div
@@ -638,8 +645,8 @@ export const OptimizedDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h2 className="text-2xl font-bold text-white mb-2">📊 DAO Performance Matrix</h2>
-            <p className="text-gray-400">Comprehensive comparison across all DAOs</p>
+            <h2 className="text-2xl font-semibold text-white mb-2">DAO Performance Matrix</h2>
+            <p className="text-base text-gray-400">Comprehensive comparison across all DAOs</p>
           </motion.div>
           
           <ProtocolPerformanceChart
@@ -652,7 +659,7 @@ export const OptimizedDashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* 🔍 INTERACTIVE ANALYSIS SECTION */}
+      {/* INTERACTIVE ANALYSIS SECTION */}
       <section className="flex-1 bg-gradient-to-b from-gray-900/20 to-black/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
@@ -661,8 +668,8 @@ export const OptimizedDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            <h2 className="text-2xl font-bold text-white mb-2">🔬 Deep Dive Analysis</h2>
-            <p className="text-gray-400">Interactive charts and detailed DAO exploration</p>
+            <h2 className="text-2xl font-semibold text-white mb-2">Deep Dive Analysis</h2>
+            <p className="text-base text-gray-400">Interactive charts and detailed DAO exploration</p>
           </motion.div>
           
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
@@ -701,7 +708,7 @@ export const OptimizedDashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* 📋 DETAILED DATA TABLE */}
+      {/* DETAILED DATA TABLE */}
       <section className="bg-gray-950/30 border-t border-gray-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
@@ -710,8 +717,8 @@ export const OptimizedDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.7 }}
           >
-            <h2 className="text-2xl font-bold text-white mb-2">📊 Complete DAO Data</h2>
-            <p className="text-gray-400">Comprehensive table with all DAO metrics and statistics</p>
+            <h2 className="text-2xl font-semibold text-white mb-2">Complete DAO Data</h2>
+            <p className="text-base text-gray-400">Comprehensive table with all DAO metrics and statistics</p>
           </motion.div>
           
           <ProtocolTable
@@ -729,7 +736,7 @@ export const OptimizedDashboard: React.FC = () => {
 
 
 
-      {/* 🦶 FOOTER */}
+      {/* FOOTER */}
       <Footer />
 
       {/* Submission Modal */}
@@ -777,7 +784,7 @@ export const OptimizedDashboard: React.FC = () => {
           </svg>
           
           <div className="text-left">
-            <div className="text-sm font-bold leading-tight">Add DAO</div>
+            <div className="text-sm font-semibold leading-tight">Add DAO</div>
             <div className="text-xs opacity-80 leading-tight">Join the Movement</div>
           </div>
         </div>
