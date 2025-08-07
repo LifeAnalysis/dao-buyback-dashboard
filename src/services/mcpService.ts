@@ -85,7 +85,7 @@ export class MCPService {
           }
         },
         {
-          type: 'protocol_health',
+          type: 'dao_health',
           confidence: 0.92,
           data: {
             liquidity_score: 8.5,
@@ -122,7 +122,7 @@ export class MCPService {
   private mockJupiterResponse(query: string): any {
     return {
       buybacks: {
-        protocol_revenue_24h: 850000,
+        dao_revenue_24h: 850000,
         buyback_allocation: 0.50,
         estimated_buyback_24h: 425000,
         total_tokens_repurchased: 45200000,
@@ -158,7 +158,7 @@ export class MCPService {
     return this.queryMCP('context7', prompt, context);
   }
 
-  // Protocol-specific query methods
+  // DAO-specific query methods
   async getHyperliquidData(endpoint: string = 'buybacks'): Promise<MCPResponse> {
     return this.queryMCP('hyperliquid', endpoint);
   }

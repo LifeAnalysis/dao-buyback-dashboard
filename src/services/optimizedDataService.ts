@@ -19,6 +19,7 @@ import {
   formatDate
 } from '../utils/formatters';
 import {
+  isValidDAOToken,
   isValidProtocolToken,
   isValidPrice,
   isValidVolume,
@@ -30,6 +31,7 @@ import {
 import { DatabaseService } from '../database/browserDb';
 import type { 
   BuybackData, 
+  DAOToken,
   ProtocolToken, 
   CacheEntry, 
   AppError,
@@ -239,7 +241,7 @@ export class OptimizedDataService {
   }
 
   /**
-   * Get buyback data for a specific protocol
+   * Get buyback data for a specific DAO
    */
   async getBuybackData(token: ProtocolToken): Promise<BuybackData> {
     const validToken = this.validateProtocolToken(token);
@@ -284,7 +286,7 @@ export class OptimizedDataService {
   }
 
   /**
-   * Get all buyback data for all protocols
+   * Get all buyback data for all DAOs
    */
   async getAllBuybackData(): Promise<BuybackData[]> {
     const cacheKey = 'all_buyback_data';
@@ -309,8 +311,8 @@ export class OptimizedDataService {
         return buybackData;
       }
 
-      // Fallback: Fetch fresh data for all protocols
-      console.log('Fetching fresh data for all protocols...');
+      // Fallback: Fetch fresh data for all DAOs
+      console.log('Fetching fresh data for all DAOs...');
       const dataPromises = PROTOCOL_TOKENS.map(token => this.getBuybackData(token));
       const allData = await Promise.all(dataPromises);
 
@@ -324,7 +326,7 @@ export class OptimizedDataService {
       console.error('Error getting all buyback data:', error);
       
       // Final fallback: Return mock data for all protocols
-      console.warn('Using fallback mock data for all protocols');
+      console.warn('Using fallback mock data for all DAOs');
       const fallbackPromises = PROTOCOL_TOKENS.map(token => this.getBuybackData(token));
       return Promise.all(fallbackPromises);
     }
@@ -358,6 +360,7 @@ export class OptimizedDataService {
    */
   private convertDbRecordToBuybackData(record: any): BuybackData {
     return {
+      dao: record.protocol, // Map protocol to dao for new naming convention
       protocol: record.protocol,
       token: record.token,
       totalRepurchased: record.total_repurchased,

@@ -204,6 +204,7 @@ export class DataService {
 
   private convertDbRecordToBuybackData(record: BuybackRecord): BuybackData {
     return {
+      dao: record.protocol, // Map protocol to dao for new naming convention
       protocol: record.protocol,
       token: record.token,
       totalRepurchased: record.total_repurchased,

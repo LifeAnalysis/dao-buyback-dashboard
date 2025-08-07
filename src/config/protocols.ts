@@ -1,6 +1,6 @@
-import { ProtocolConfig } from '../types';
+import { DAOConfig, ProtocolConfig } from '../types';
 
-export const PROTOCOLS: ProtocolConfig[] = [
+export const DAOS: DAOConfig[] = [
   {
     name: 'Hyperliquid',
     token: 'HYPE',
@@ -159,3 +159,6 @@ export const MOCK_BUYBACK_DATA = {
     ]
   }
 };
+
+// Backward compatibility
+export const PROTOCOLS: ProtocolConfig[] = DAOS;

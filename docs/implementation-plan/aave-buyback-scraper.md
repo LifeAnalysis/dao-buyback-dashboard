@@ -3,6 +3,8 @@
 ## Background and Motivation
 The user wants to scrape real Aave buyback data from https://aave.tokenlogic.xyz/buybacks and replace the current mock data implementation. This will provide accurate, real-time Aave treasury metrics to enhance the dashboard's value proposition.
 
+**[2025-01-27 UPDATE]**: User requested optimization of the Aave data scraper to only fetch essential data needed to populate the dashboard table, rather than collecting comprehensive data including charts and full transaction history. The goal is to streamline data collection for better performance and focus on core metrics display.
+
 ## Branch Name
 `feature/aave-buyback-integration`
 
@@ -12,6 +14,12 @@ The user wants to scrape real Aave buyback data from https://aave.tokenlogic.xyz
 - Must maintain the existing caching and performance architecture
 - Ensure data format compatibility with existing dashboard components
 - Handle potential rate limiting and error scenarios gracefully
+
+**[2025-01-27 OPTIMIZATION ANALYSIS]**:
+- Current implementation fetches comprehensive data including chart points (136 points) and transaction history (50 transactions)
+- Dashboard only displays core metrics: total AAVE purchased, current price, portfolio value, P&L, treasury holdings, and funding status
+- Chart data (`cumulativeChart`) and transaction details (`transactions`) are not displayed in the UI
+- Opportunity to reduce data transfer and processing by focusing only on essential metrics
 
 ## High-level Task Breakdown
 
@@ -46,7 +54,7 @@ The user wants to scrape real Aave buyback data from https://aave.tokenlogic.xyz
 
 ## Project Status Board
 
-### ✅ ALL TASKS COMPLETED
+### 🔄 OPTIMIZATION IN PROGRESS
 
 ### Completed
 - [x] Task 1: Create Feature Branch and Setup
@@ -54,6 +62,12 @@ The user wants to scrape real Aave buyback data from https://aave.tokenlogic.xyz
 - [x] Task 3: Implement Aave Data Service
 - [x] Task 4: Update Dashboard Components
 - [x] Task 5: Testing and Validation
+
+### New Optimization Tasks
+- [ ] Task 6: Analyze Essential Data Requirements
+- [ ] Task 7: Optimize Data Fetching to Essential Fields Only
+- [ ] Task 8: Simplify Type Definitions
+- [ ] Task 9: Test Optimized Implementation
 
 ## Current Status / Progress Tracking
 
@@ -119,10 +133,20 @@ The user wants to scrape real Aave buyback data from https://aave.tokenlogic.xyz
 **🎉 PROJECT COMPLETE**: All requirements fulfilled, tested, and deployed to development environment.
 
 ## Executor's Feedback or Assistance Requests
-- **✅ MISSION ACCOMPLISHED**: All tasks completed successfully
+
+**[2025-01-27 OPTIMIZATION REQUEST]**: 
+- **🎯 NEW GOAL**: User requested optimization to fetch only essential data for dashboard display
+- **📊 CURRENT STATE**: Implementation fetches comprehensive data (charts + transactions) but UI only shows core metrics
+- **⚡ OPTIMIZATION TARGET**: Remove chart data generation and transaction history to focus on core metrics only
+- **🔧 REQUIRED CHANGES**: 
+  1. Simplify AaveBuybackData interface
+  2. Remove chart and transaction generation from service
+  3. Focus scraping efforts on core dashboard metrics only
+  4. Maintain performance and caching benefits
+
+**Previous Achievements**:
+- **✅ MISSION ACCOMPLISHED**: All initial tasks completed successfully
 - **✅ PRODUCTION READY**: Code tested, documented, and committed to feature branch
 - **✅ USER TESTED**: Dashboard running smoothly with real Aave data integration
 - **✅ ZERO BREAKING CHANGES**: All existing functionality preserved
 - **✅ EXTENSIBLE FRAMEWORK**: Architecture ready for additional protocol integrations
-
-**Ready for merge**: Feature branch `feature/aave-buyback-integration` contains complete implementation and is ready for review/merge to main.

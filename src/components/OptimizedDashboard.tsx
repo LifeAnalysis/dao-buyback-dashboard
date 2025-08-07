@@ -109,14 +109,12 @@ interface ProtocolSelectorProps {
   protocols: BuybackData[];
   selectedProtocol: string;
   onProtocolSelect: (protocol: string) => void;
-  onAddProtocol?: () => void;
 }
 
 const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
   protocols,
   selectedProtocol,
-  onProtocolSelect,
-  onAddProtocol
+  onProtocolSelect
 }) => (
   <motion.div 
     className="dark-card"
@@ -161,41 +159,7 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
           </div>
         </button>
       ))}
-      
-      {/* Add Protocol Button */}
-      {onAddProtocol && (
-        <motion.button
-          onClick={onAddProtocol}
-          className="w-full p-3 border-2 border-dashed rounded-lg transition-all group mt-4"
-          style={{
-            borderColor: `${THEME_COLORS.PRIMARY_GREEN}30`,
-            backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}05`
-          }}
-          whileHover={{
-            borderColor: `${THEME_COLORS.PRIMARY_GREEN}60`,
-            backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}10`
-          }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="flex items-center justify-center gap-3" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>
-            <svg 
-              className="w-5 h-5 group-hover:scale-110 transition-transform" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 4v16m8-8H4" 
-              />
-            </svg>
-            <span className="font-mono font-medium">Add Your Protocol</span>
-          </div>
-          <div className="text-xs mt-1 opacity-70 font-mono">Join the DAO movement</div>
-        </motion.button>
-      )}
+
     </div>
   </motion.div>
 ));
@@ -433,6 +397,7 @@ export const OptimizedDashboard: React.FC = () => {
   const [state, setState] = useState<DashboardState>({
     buybackData: [],
     historicalData: [],
+    selectedDAO: 'Hyperliquid',
     selectedProtocol: 'Hyperliquid',
     sortBy: 'marketCap',
     sortOrder: 'desc',
@@ -612,7 +577,6 @@ export const OptimizedDashboard: React.FC = () => {
                 protocols={state.buybackData}
                 selectedProtocol={state.selectedProtocol}
                 onProtocolSelect={handleProtocolSelect}
-                onAddProtocol={handleModalOpen}
               />
             </div>
           </div>
@@ -656,7 +620,7 @@ export const OptimizedDashboard: React.FC = () => {
         }}
         whileHover={{ y: -2, scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        title="Add Your Protocol to the DAO Buyback Movement"
+        title="Add Your DAO to the Buyback Movement"
       >
         <div className="flex items-center gap-3 px-6 py-4 text-black">
           {/* Treasury/Vault icon */}
@@ -684,7 +648,7 @@ export const OptimizedDashboard: React.FC = () => {
           </svg>
           
           <div className="text-left">
-            <div className="text-sm font-bold leading-tight">Add Protocol</div>
+            <div className="text-sm font-bold leading-tight">Add DAO</div>
             <div className="text-xs opacity-80 leading-tight">Join the Movement</div>
           </div>
         </div>
@@ -700,7 +664,7 @@ export const OptimizedDashboard: React.FC = () => {
         {/* Enhanced tooltip */}
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-[#0a0a0a] border border-gray-800 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 font-mono shadow-lg"
              style={{ boxShadow: `0 10px 25px -5px rgba(0, 255, 135, 0.1)` }}>
-          <div className="font-medium">Submit Your DAO Protocol</div>
+          <div className="font-medium">Submit Your DAO</div>
           <div className="text-xs text-gray-400 mt-1">Help grow the ecosystem</div>
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
         </div>

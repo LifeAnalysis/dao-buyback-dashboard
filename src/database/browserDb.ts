@@ -325,7 +325,7 @@ export class DatabaseService {
   forceRegenerateData(): void {
     localStorage.removeItem(this.BUYBACK_KEY);
     localStorage.removeItem(this.HISTORICAL_KEY);
-    this.initializeMockData();
+    this.generateSampleData();
   }
 
   // Close database connection (no-op for localStorage)
