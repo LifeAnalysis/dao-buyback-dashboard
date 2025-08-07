@@ -83,9 +83,7 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Compact Header with Description */}
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-semibold text-white mb-2">
-          Treasury Analytics
-        </h1>
+
 
       </div>
       
@@ -175,7 +173,7 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <div className="flex-shrink-0">
-                <ProtocolLogoImage protocol={protocol.protocol} size="xs" />
+                <ProtocolLogoImage protocol={protocol.protocol} size="sm" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-white text-xs leading-tight truncate">
