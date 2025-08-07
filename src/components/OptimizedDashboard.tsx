@@ -163,7 +163,7 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
         <button
           key={protocol.protocol}
           onClick={() => onProtocolSelect(protocol.protocol)}
-          className={`w-full text-left p-3 rounded-lg transition-all ${
+          className={`w-full text-left p-4 rounded-lg transition-all ${
             selectedProtocol === protocol.protocol
               ? 'border bg-opacity-10 hover:bg-opacity-20'
               : 'border border-transparent hover:bg-[#1a1a1a]'
@@ -177,19 +177,19 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
               : {}
           }
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               <ProtocolLogoImage protocol={protocol.protocol} size="md" />
-              <div>
-                <div className="font-medium text-white">{protocol.protocol}</div>
-                <div className="text-sm text-gray-400">{protocol.token}</div>
+              <div className="min-w-0 flex-1">
+                <div className="font-medium text-white truncate">{protocol.protocol}</div>
+                <div className="text-sm text-gray-400 truncate">{protocol.token}</div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="font-medium text-white font-mono">
+            <div className="text-right flex-shrink-0 min-w-[100px]">
+              <div className="font-medium text-white font-mono text-sm">
                 {formatCurrency(protocol.totalValueUSD)}
               </div>
-              <div className="text-sm" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>+{protocol.circulatingSupplyPercent}%</div>
+              <div className="text-xs mt-1" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>+{protocol.circulatingSupplyPercent}%</div>
             </div>
           </div>
         </button>
@@ -607,53 +607,108 @@ export const OptimizedDashboard: React.FC = () => {
   // Main dashboard
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      {/* Header */}
-      <Header />
 
-      {/* Global Market Stats */}
-      <GlobalStatsSection stats={globalStats} />
 
-      {/* Protocol Performance Overview - Strategic Top Position */}
-      <div className="bg-gray-950/50 border-b border-gray-800/50">
+      {/* 📊 MARKET OVERVIEW HERO SECTION */}
+      <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-black border-b border-gray-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <motion.div
+            className="text-center mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+
+          </motion.div>
+          <GlobalStatsSection stats={globalStats} />
+        </div>
+      </section>
+
+      {/* 📈 DAO PERFORMANCE MATRIX */}
+      <section className="bg-gray-950/30 border-b border-gray-800/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h2 className="text-2xl font-bold text-white mb-2">📊 DAO Performance Matrix</h2>
+            <p className="text-gray-400">Comprehensive comparison across all DAOs</p>
+          </motion.div>
+          
           <ProtocolPerformanceChart
             data={state.buybackData}
-            title="Protocol Performance Comparison"
-            height={320}
+            title=""
+            height={350}
             showComparisons={true}
             metric="totalValueUSD"
           />
         </div>
-      </div>
+      </section>
 
-      {/* Main Content */}
-      <div className="flex-1">
+      {/* 🔍 INTERACTIVE ANALYSIS SECTION */}
+      <section className="flex-1 bg-gradient-to-b from-gray-900/20 to-black/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Chart */}
-            <div className="lg:col-span-2">
-              <OptimizedChart
-                data={chartData}
-                title={`${state.selectedProtocol} Buyback Activity`}
-                color={getProtocolColor(state.selectedProtocol)}
-                height={400}
-                showVolume={true}
-              />
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold text-white mb-2">🔬 Deep Dive Analysis</h2>
+            <p className="text-gray-400">Interactive charts and detailed DAO exploration</p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="xl:col-span-1">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                <ProtocolSelector
+                  protocols={state.buybackData}
+                  selectedProtocol={state.selectedProtocol}
+                  onProtocolSelect={handleProtocolSelect}
+                />
+              </motion.div>
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              <ProtocolSelector
-                protocols={state.buybackData}
-                selectedProtocol={state.selectedProtocol}
-                onProtocolSelect={handleProtocolSelect}
-              />
+            {/* Main Chart Area */}
+            <div className="xl:col-span-3">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                <OptimizedChart
+                  data={chartData}
+                  title={`${state.selectedProtocol} Buyback Activity`}
+                  color={getProtocolColor(state.selectedProtocol)}
+                  height={450}
+                  showVolume={true}
+                />
+              </motion.div>
             </div>
           </div>
+        </div>
+      </section>
 
-
-
-          {/* Protocol Table */}
+      {/* 📋 DETAILED DATA TABLE */}
+      <section className="bg-gray-950/30 border-t border-gray-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <h2 className="text-2xl font-bold text-white mb-2">📊 Complete DAO Data</h2>
+            <p className="text-gray-400">Comprehensive table with all DAO metrics and statistics</p>
+          </motion.div>
+          
           <ProtocolTable
             protocols={sortedProtocols}
             selectedProtocol={state.selectedProtocol}
@@ -664,12 +719,12 @@ export const OptimizedDashboard: React.FC = () => {
             onSortByChange={(sortBy) => setState(prev => ({ ...prev, sortBy }))}
             onSortOrderChange={(sortOrder) => setState(prev => ({ ...prev, sortOrder }))}
           />
-
-
         </div>
-      </div>
+      </section>
 
-      {/* Footer */}
+
+
+      {/* 🦶 FOOTER */}
       <Footer />
 
       {/* Submission Modal */}
