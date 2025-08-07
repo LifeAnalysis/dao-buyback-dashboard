@@ -174,12 +174,12 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
               : {}
           }
         >
-          <div className="flex items-center justify-between gap-6">
-            <div className="flex items-center gap-4 flex-1 min-w-0">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-4">
               <div className="flex-shrink-0">
                 <ProtocolLogoImage protocol={protocol.protocol} size="md" />
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="flex-1">
                 <div className="font-semibold text-white text-base leading-tight">
                   {protocol.protocol}
                 </div>
@@ -188,15 +188,21 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
                 </div>
               </div>
             </div>
-            <div className="text-right flex-shrink-0 min-w-[140px]">
-              <div className="font-semibold text-white font-mono text-base leading-tight">
-                {formatCurrency(protocol.totalValueUSD)}
+            <div className="flex justify-between items-center">
+              <div className="text-left">
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Value</div>
+                <div className="font-semibold text-white font-mono text-sm leading-tight">
+                  {formatCurrency(protocol.totalValueUSD)}
+                </div>
               </div>
-              <div 
-                className="text-sm font-medium mt-1"
-                style={{ color: THEME_COLORS.PRIMARY_GREEN }}
-              >
-                +{protocol.circulatingSupplyPercent}%
+              <div className="text-right">
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Supply Reduced</div>
+                <div 
+                  className="text-sm font-medium leading-tight"
+                  style={{ color: THEME_COLORS.PRIMARY_GREEN }}
+                >
+                  +{protocol.circulatingSupplyPercent}%
+                </div>
               </div>
             </div>
           </div>
