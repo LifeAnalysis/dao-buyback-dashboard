@@ -98,15 +98,21 @@ export class DatabaseService {
       'Fluid': { value: 28000000, tokens: 4800000 }
     };
 
-    for (let i = 30; i >= 0; i--) {
+    // Generate data for the last 365 days to support all timeframes (1D to 1Y)
+    for (let i = 365; i >= 0; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
       const timestamp = date.toISOString();
 
       protocols.forEach(protocol => {
-        // Generate realistic variance
-        const priceVariance = 0.9 + Math.random() * 0.2;
-        const volumeVariance = 0.8 + Math.random() * 0.4;
+        // Generate realistic variance based on how far back we are
+        const daysFactor = Math.max(0.5, 1 - (i / 365) * 0.5); // Gradual change over time
+        const seasonalFactor = 1 + 0.3 * Math.sin((i / 365) * 2 * Math.PI); // Seasonal variation
+        const randomFactor = 0.85 + Math.random() * 0.3; // Daily random variance
+        
+        const priceVariance = daysFactor * seasonalFactor * randomFactor;
+        const volumeVariance = daysFactor * seasonalFactor * (0.7 + Math.random() * 0.6);
+        
         const price = protocol.basePrice * priceVariance;
         const volume = protocol.baseVolume * volumeVariance;
         
@@ -293,10 +299,10 @@ export class DatabaseService {
     }));
   }
 
-  // Clean old data (keep last 90 days)
+  // Clean old data (keep last 365 days to support 1Y timeframe)
   cleanOldData(): number {
     const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - 90);
+    cutoffDate.setDate(cutoffDate.getDate() - 365);
     
     const buybackRecords = this.getBuybackRecords();
     const historicalRecords = this.getHistoricalRecords();
@@ -313,6 +319,13 @@ export class DatabaseService {
     
     return (buybackRecords.length - filteredBuyback.length) + 
            (historicalRecords.length - filteredHistorical.length);
+  }
+
+  // Force regenerate mock data with new timeframe support
+  forceRegenerateData(): void {
+    localStorage.removeItem(this.BUYBACK_KEY);
+    localStorage.removeItem(this.HISTORICAL_KEY);
+    this.initializeMockData();
   }
 
   // Close database connection (no-op for localStorage)

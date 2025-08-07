@@ -357,10 +357,11 @@ export const OptimizedChart = memo<ChartProps>(({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={formatChartDate}
+                tickFormatter={(value) => formatChartDateByTimeframe(value, timeframe)}
                 height={40}
                 tickMargin={10}
                 interval="preserveStartEnd"
+                tickCount={getOptimalTickCount(timeframe)}
               />
               
               <YAxis
@@ -396,7 +397,7 @@ export const OptimizedChart = memo<ChartProps>(({
               />
               
               <Tooltip
-                content={<CustomTooltip />}
+                content={<CustomTooltip timeframe={timeframe} />}
                 cursor={{ stroke: color, strokeWidth: 1, strokeOpacity: 0.5 }}
               />
               
@@ -448,10 +449,11 @@ export const OptimizedChart = memo<ChartProps>(({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={formatChartDate}
+                tickFormatter={(value) => formatChartDateByTimeframe(value, timeframe)}
                 height={40}
                 tickMargin={10}
                 interval="preserveStartEnd"
+                tickCount={getOptimalTickCount(timeframe)}
               />
               
               <YAxis
@@ -473,7 +475,7 @@ export const OptimizedChart = memo<ChartProps>(({
               />
               
               <Tooltip
-                content={<CustomTooltip />}
+                content={<CustomTooltip timeframe={timeframe} />}
                 cursor={{ stroke: color, strokeWidth: 1, strokeOpacity: 0.5 }}
               />
               

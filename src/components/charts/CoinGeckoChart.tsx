@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   AreaChart,
   Area,
@@ -11,6 +11,8 @@ import {
   Bar
 } from 'recharts';
 import { motion } from 'framer-motion';
+import { filterDataByTimeframe, getOptimalTickCount, type TimeframeOption } from '../../utils/helpers';
+import { formatChartDateByTimeframe } from '../../utils/formatters';
 
 interface ChartDataPoint {
   timestamp: string;
@@ -36,7 +38,12 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
   showVolume = true
 }) => {
   const [activeChart, setActiveChart] = useState<'price' | 'marketCap' | 'volume'>('price');
-  const [timeframe, setTimeframe] = useState<'1D' | '7D' | '30D' | '90D' | '1Y'>('30D');
+  const [timeframe, setTimeframe] = useState<TimeframeOption>('30D');
+
+  // Filter data by timeframe
+  const filteredData = useMemo(() => {
+    return filterDataByTimeframe(data, timeframe);
+  }, [data, timeframe]);
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000000) return `$${(value / 1000000000).toFixed(2)}B`;
@@ -52,19 +59,9 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
     return value.toFixed(0);
   };
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      hour: timeframe === '1D' ? 'numeric' : undefined,
-      minute: timeframe === '1D' ? '2-digit' : undefined
-    });
-  };
-
   const getCurrentValue = () => {
-    if (data.length === 0) return 0;
-    const latest = data[data.length - 1];
+    if (filteredData.length === 0) return 0;
+    const latest = filteredData[filteredData.length - 1];
     switch (activeChart) {
       case 'price': return latest.price;
       case 'marketCap': return latest.marketCap;
@@ -74,8 +71,8 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
   };
 
   const getChange24h = () => {
-    if (data.length < 2) return 0;
-    const previous = data[data.length - 2];
+    if (filteredData.length < 2) return 0;
+    const previous = filteredData[filteredData.length - 2];
     const currentValue = getCurrentValue();
     const previousValue = activeChart === 'price' ? previous.price : 
                          activeChart === 'marketCap' ? previous.marketCap : previous.volume;
@@ -153,7 +150,7 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
       <div style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
           {showVolume && activeChart === 'price' ? (
-            <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <ComposedChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={color} stopOpacity={0.3}/>
@@ -176,7 +173,7 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={formatDate}
+                tickFormatter={(value) => formatChartDateByTimeframe(value, timeframe)}
                 height={40}
                 tickMargin={10}
                 interval="preserveStartEnd"
@@ -225,7 +222,7 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
                   name === 'price' ? formatCurrency(value) : formatVolume(value),
                   name === 'price' ? 'Price' : 'Volume'
                 ]}
-                labelFormatter={(label) => formatDate(label)}
+                labelFormatter={(label) => formatChartDateByTimeframe(label, timeframe)}
                 labelStyle={{ color: '#00ff87', fontWeight: 'bold' }}
               />
               <Bar 
@@ -246,7 +243,7 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
               />
             </ComposedChart>
           ) : (
-            <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id={`color${activeChart}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={color} stopOpacity={0.3}/>
@@ -269,7 +266,7 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace'
                 }}
-                tickFormatter={formatDate}
+                tickFormatter={(value) => formatChartDateByTimeframe(value, timeframe)}
                 height={40}
                 tickMargin={10}
                 interval="preserveStartEnd"
@@ -301,7 +298,7 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
                   activeChart === 'volume' ? formatVolume(value) : formatCurrency(value),
                   activeChart === 'price' ? 'Price' : activeChart === 'marketCap' ? 'Market Cap' : 'Volume'
                 ]}
-                labelFormatter={(label) => formatDate(label)}
+                labelFormatter={(label) => formatChartDateByTimeframe(label, timeframe)}
                 labelStyle={{ color: '#00ff87', fontWeight: 'bold' }}
               />
               <Area
@@ -322,13 +319,13 @@ export const CoinGeckoChart: React.FC<CoinGeckoChartProps> = ({
         <div>
           <div className="text-xs text-gray-500 mb-1">24h Volume</div>
           <div className="font-semibold text-gray-900 dark:text-white">
-            {data.length > 0 ? formatVolume(data[data.length - 1].volume) : '-'}
+            {filteredData.length > 0 ? formatVolume(filteredData[filteredData.length - 1].volume) : '-'}
           </div>
         </div>
         <div>
           <div className="text-xs text-gray-500 mb-1">Market Cap</div>
           <div className="font-semibold text-gray-900 dark:text-white">
-            {data.length > 0 ? formatCurrency(data[data.length - 1].marketCap) : '-'}
+            {filteredData.length > 0 ? formatCurrency(filteredData[filteredData.length - 1].marketCap) : '-'}
           </div>
         </div>
         <div>
