@@ -1,6 +1,40 @@
 /**
  * Optimized Dashboard Component
- * Clean, maintainable dashboard using the new modular architecture
+ * 
+ * The main dashboard component for the Treasury Dashboard application.
+ * This component provides a comprehensive view of DAO token buyback activities
+ * across multiple protocols with real-time data integration.
+ * 
+ * Features:
+ * - Real-time buyback data from multiple DAOs (Hyperliquid, Jupiter, Aave, etc.)
+ * - Interactive charts with historical data visualization
+ * - Global market statistics and performance metrics
+ * - Protocol selector with live data updates
+ * - Responsive design with modern animations
+ * - Error handling and loading states
+ * 
+ * Architecture:
+ * - Uses OptimizedDataService for data fetching and caching
+ * - Implements React.memo and useMemo for performance optimization
+ * - Modular component structure with clean separation of concerns
+ * - TypeScript interfaces for type safety
+ * 
+ * Data Flow:
+ * 1. Fetch buyback data from OptimizedDataService on mount
+ * 2. Transform data for charts and statistics
+ * 3. Update UI with smooth animations
+ * 4. Refresh data every 5 minutes automatically
+ * 
+ * State Management:
+ * - Uses single DashboardState object for consistency
+ * - Handles loading, error, and success states
+ * - Tracks selected protocol and sort preferences
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <OptimizedDashboard />
+ * ```
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -393,42 +427,64 @@ LoadingSpinner.displayName = 'LoadingSpinner';
  * Main Optimized Dashboard Component
  */
 export const OptimizedDashboard: React.FC = () => {
-  // State management
+  // ===== STATE MANAGEMENT =====
+  
+  /**
+   * Main dashboard state - consolidates all data and UI state in one object
+   * This pattern ensures consistency and makes state updates atomic
+   */
   const [state, setState] = useState<DashboardState>({
-    buybackData: [],
-    historicalData: [],
-    selectedDAO: 'Hyperliquid',
-    selectedProtocol: 'Hyperliquid',
-    sortBy: 'marketCap',
-    sortOrder: 'desc',
-    loading: true,
-    error: null,
-    lastUpdated: null,
+    buybackData: [],           // DAO buyback data from all protocols
+    historicalData: [],        // Historical chart data points
+    selectedDAO: 'Hyperliquid', // Currently selected DAO for detailed view
+    selectedProtocol: 'Hyperliquid', // TODO: Deprecated, remove after migration
+    sortBy: 'marketCap',       // Sort criterion for protocol table
+    sortOrder: 'desc',         // Sort direction (desc = highest first)
+    loading: true,             // Loading state for entire dashboard
+    error: null,               // Error state for user feedback
+    lastUpdated: null,         // Timestamp of last successful data fetch
   });
 
+  // Submission modal state (separate from main state for performance)
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Get singleton instance of optimized data service
   const dataService = OptimizedDataService.getInstance();
 
-  // Memoized calculations
+  // ===== MEMOIZED CALCULATIONS =====
+  
+  /**
+   * Global statistics calculated from all DAO data
+   * Memoized to prevent recalculation on every render
+   */
   const globalStats = useMemo((): GlobalStats => {
     return {
       totalCoins: state.buybackData.length,
+      // Estimate market cap as 10x total buyback value (realistic multiple)
       totalMarketCap: state.buybackData.reduce((sum, data) => sum + data.totalValueUSD * 10, 0),
+      // Daily volume estimate from annual buyback rate
       total24hVolume: state.buybackData.reduce((sum, data) => sum + data.estimatedAnnualBuyback / 365, 0),
+      // Total tokens bought back across all DAOs
       totalTokensBoughtBack: state.buybackData.reduce((sum, data) => sum + data.totalRepurchased, 0),
+      // Total USD value of all buybacks
       totalRevenue: state.buybackData.reduce((sum, data) => sum + data.totalValueUSD, 0),
     };
   }, [state.buybackData]);
 
+  /**
+   * Sorted protocols for the main table display
+   * Supports multiple sort criteria with dynamic ordering
+   */
   const sortedProtocols = useMemo(() => {
     return sortArray(
       state.buybackData,
       (protocol) => {
+        // Map sort criteria to actual data fields
         switch (state.sortBy) {
-          case 'marketCap': return protocol.totalValueUSD;
-          case 'volume': return protocol.estimatedAnnualBuyback;
-          case 'change': return protocol.circulatingSupplyPercent;
-          default: return protocol.totalValueUSD;
+          case 'marketCap': return protocol.totalValueUSD;        // Total buyback value
+          case 'volume': return protocol.estimatedAnnualBuyback;  // Annual buyback estimate
+          case 'change': return protocol.circulatingSupplyPercent; // Supply reduction %
+          default: return protocol.totalValueUSD;                // Default to market cap
         }
       },
       state.sortOrder
