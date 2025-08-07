@@ -1,5 +1,6 @@
 import React from 'react';
 import { BuybackData } from '../types';
+import { ProtocolLogoImage } from './ProtocolLogo';
 
 interface ProtocolCardProps {
   data: BuybackData;
@@ -39,7 +40,7 @@ export const ProtocolCard: React.FC<ProtocolCardProps> = ({ data, color, icon })
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{icon}</span>
+            <ProtocolLogoImage protocol={data.protocol} size="md" />
             <div>
               <h2 className="text-xl font-bold">{data.protocol}</h2>
               <p className="text-white/90 text-sm">{data.token} Token Buybacks</p>

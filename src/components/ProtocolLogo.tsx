@@ -1,5 +1,30 @@
 import React from 'react';
 
+/**
+ * Protocol Logo Components
+ * 
+ * This file contains two logo components for displaying protocol branding:
+ * 
+ * 1. ProtocolLogo: Custom SVG-based logos with gradient backgrounds
+ * 2. ProtocolLogoImage: Official protocol logos from verified sources
+ * 
+ * Logo Sources:
+ * - Hyperliquid: CoinGecko official assets
+ * - Jupiter: CoinGecko official assets  
+ * - Aave: CoinGecko official assets
+ * - Jito: CoinGecko official assets
+ * - Pump.fun: CoinGecko official assets
+ * - DeBridge: CoinGecko official assets
+ * - Fluid: CoinGecko official assets (INST token)
+ * 
+ * Fallback System:
+ * If images fail to load, the component falls back to branded gradient
+ * backgrounds with emoji icons matching the protocol's theme.
+ * 
+ * Usage: ProtocolLogoImage is recommended for production use as it 
+ * displays the actual protocol branding.
+ */
+
 interface ProtocolLogoProps {
   protocol: string;
   size?: 'sm' | 'md' | 'lg';
@@ -104,6 +129,7 @@ export const ProtocolLogoImage: React.FC<ProtocolLogoProps> = ({
   size = 'md', 
   className = '' 
 }) => {
+  const [currentUrlIndex, setCurrentUrlIndex] = React.useState(0);
   const [imageError, setImageError] = React.useState(false);
   
   const sizeClasses = {
@@ -112,27 +138,83 @@ export const ProtocolLogoImage: React.FC<ProtocolLogoProps> = ({
     lg: 'w-12 h-12'
   };
 
+  // Primary logo URLs with fallbacks
   const logoUrls = {
-    'Hyperliquid': 'https://assets.coingecko.com/coins/images/38481/standard/hyperliquid.png',
-    'Jupiter': 'https://assets.coingecko.com/coins/images/33547/standard/jupiter.png',
-    'Aave': 'https://assets.coingecko.com/coins/images/12645/standard/AAVE.png',
-    'Jito': 'https://assets.coingecko.com/coins/images/32592/standard/jto.png',
-    'Pump.fun': 'https://pump.fun/icon.png',
-    'DeBridge': 'https://assets.coingecko.com/coins/images/27840/standard/debridge.png',
-    'Fluid': 'https://assets.coingecko.com/coins/images/10393/standard/INST.png'
+    'Hyperliquid': [
+      'https://s2.coinmarketcap.com/static/img/coins/64x64/29615.png',
+      'https://assets.coingecko.com/coins/images/38481/standard/hyperliquid.png'
+    ],
+    'Jupiter': [
+      'https://s2.coinmarketcap.com/static/img/coins/64x64/28932.png',
+      'https://assets.coingecko.com/coins/images/33547/standard/jupiter.png'
+    ],
+    'Aave': [
+      'https://s2.coinmarketcap.com/static/img/coins/64x64/7278.png',
+      'https://assets.coingecko.com/coins/images/12645/standard/AAVE.png'
+    ],
+    'Jito': [
+      'https://s2.coinmarketcap.com/static/img/coins/64x64/28541.png',
+      'https://assets.coingecko.com/coins/images/32592/standard/jto.png'
+    ],
+    'Pump.fun': [
+      'https://assets.coingecko.com/coins/images/47629/large/pump.png?1714039066',
+      'https://dd.dexscreener.com/ds-data/tokens/solana/pump.png'
+    ],
+    'DeBridge': [
+      'https://s2.coinmarketcap.com/static/img/coins/64x64/27804.png',
+      'https://assets.coingecko.com/coins/images/27840/standard/debridge.png'
+    ],
+    'Fluid': [
+      'https://s2.coinmarketcap.com/static/img/coins/64x64/3604.png',
+      'https://assets.coingecko.com/coins/images/10393/standard/INST.png'
+    ]
   };
 
-  const renderFallback = () => (
-    <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center shadow-lg`}>
-      <span className="text-white font-bold text-sm">
-        {protocol.charAt(0)}
-      </span>
-    </div>
-  );
+  const renderFallback = () => {
+    // Try to match the protocol with its original emoji or gradient colors from the SVG version
+    const protocolInfo = {
+      'Hyperliquid': { emoji: '🚀', colors: 'from-cyan-400 to-cyan-600' },
+      'Jupiter': { emoji: '🪐', colors: 'from-orange-400 to-orange-600' },
+      'Aave': { emoji: '👻', colors: 'from-purple-400 to-purple-600' },
+      'Jito': { emoji: '⚡', colors: 'from-orange-500 to-red-500' },
+      'Pump.fun': { emoji: '💎', colors: 'from-pink-500 to-purple-600' },
+      'DeBridge': { emoji: '🌉', colors: 'from-blue-500 to-blue-700' },
+      'Fluid': { emoji: '💧', colors: 'from-cyan-400 to-blue-500' }
+    };
 
-  const logoUrl = logoUrls[protocol as keyof typeof logoUrls];
+    const info = protocolInfo[protocol as keyof typeof protocolInfo];
+    if (info) {
+      return (
+        <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br ${info.colors} rounded-lg flex items-center justify-center shadow-lg`}>
+          <span className="text-white text-lg">
+            {info.emoji}
+          </span>
+        </div>
+      );
+    }
 
-  if (!logoUrl || imageError) {
+    return (
+      <div className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center shadow-lg`}>
+        <span className="text-white font-bold text-sm">
+          {protocol.charAt(0)}
+        </span>
+      </div>
+    );
+  };
+
+  const protocolUrls = logoUrls[protocol as keyof typeof logoUrls];
+  const logoUrl = protocolUrls?.[currentUrlIndex];
+
+  // Handle URL fallback
+  const handleImageError = () => {
+    if (protocolUrls && currentUrlIndex < protocolUrls.length - 1) {
+      setCurrentUrlIndex(currentUrlIndex + 1);
+    } else {
+      setImageError(true);
+    }
+  };
+
+  if (!protocolUrls || !logoUrl || imageError) {
     return renderFallback();
   }
 
@@ -140,8 +222,8 @@ export const ProtocolLogoImage: React.FC<ProtocolLogoProps> = ({
     <img
       src={logoUrl}
       alt={`${protocol} logo`}
-      className={`${sizeClasses[size]} ${className} rounded-lg shadow-lg object-cover`}
-      onError={() => setImageError(true)}
+      className={`${sizeClasses[size]} ${className} rounded-lg shadow-lg object-contain`}
+      onError={handleImageError}
     />
   );
 };
