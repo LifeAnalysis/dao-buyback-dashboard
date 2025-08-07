@@ -6,7 +6,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  BRANDING, 
   EXPECTED_PROTOCOL_COUNT,
   ANIMATION_DURATIONS,
   ANIMATION_DELAYS,
@@ -45,36 +44,50 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: ANIMATION_DELAYS.SHORT, duration: ANIMATION_DURATIONS.NORMAL }}
   >
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="group">
-          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Protocols</div>
-          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
-            {stats.totalCoins}
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Compact Header with Description */}
+      <div className="text-center mb-6">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <span className="text-xl">🏛️</span>
+          <h1 className="text-xl font-bold text-white font-mono">DAO Treasury Analytics</h1>
         </div>
-        <div className="group">
-          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Market Cap</div>
-          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
-            {formatCurrency(stats.totalMarketCap)}
+        <p className="text-xs text-gray-400 max-w-2xl mx-auto">
+          Strategic token buybacks across leading decentralized autonomous organizations
+        </p>
+      </div>
+      
+      {/* Stats Container */}
+      <div className="bg-gradient-to-r from-[#0a0a0a] via-[#111] to-[#0a0a0a] rounded-xl border border-gray-800/50 p-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="group text-center">
+            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Protocols</div>
+            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+              {stats.totalCoins}
+            </div>
           </div>
-        </div>
-        <div className="group">
-          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">24h Volume</div>
-          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
-            {formatCurrency(stats.total24hVolume)}
+          <div className="group text-center">
+            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Market Cap</div>
+            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+              {formatCurrency(stats.totalMarketCap)}
+            </div>
           </div>
-        </div>
-        <div className="group">
-          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Tokens Bought</div>
-          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
-            {formatTokenAmount(stats.totalTokensBoughtBack)}M
+          <div className="group text-center">
+            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">24h Volume</div>
+            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+              {formatCurrency(stats.total24hVolume)}
+            </div>
           </div>
-        </div>
-        <div className="group">
-          <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Revenue</div>
-          <div className="font-bold text-white text-xl font-mono group-hover:text-green-400 transition-colors">
-            {formatCurrency(stats.totalRevenue)}
+          <div className="group text-center">
+            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Tokens Bought</div>
+            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+              {formatTokenAmount(stats.totalTokensBoughtBack)}M
+            </div>
+          </div>
+          <div className="group text-center">
+            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Revenue</div>
+            <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
+              {formatCurrency(stats.totalRevenue)}
+            </div>
           </div>
         </div>
       </div>
@@ -84,31 +97,7 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
 
 GlobalStatsSection.displayName = 'GlobalStatsSection';
 
-/**
- * Description section component
- */
-const DescriptionSection = React.memo(() => (
-  <motion.div 
-    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: ANIMATION_DELAYS.MEDIUM, duration: ANIMATION_DURATIONS.NORMAL }}
-  >
-    <div className="text-center bg-gradient-to-r from-[#0a0a0a] via-[#111] to-[#0a0a0a] rounded-lg border border-gray-800/50 p-4">
-      <div className="flex items-center justify-center gap-3 mb-2">
-        <div className="text-2xl">🏛️</div>
-        <h2 className="text-lg font-bold text-white font-mono tracking-tight">
-          DAO Buybacks
-        </h2>
-      </div>
-      <p className="text-sm text-gray-400 max-w-3xl mx-auto leading-relaxed">
-        {BRANDING.DESCRIPTION}
-      </p>
-    </div>
-  </motion.div>
-));
 
-DescriptionSection.displayName = 'DescriptionSection';
 
 /**
  * Protocol selector component
@@ -561,9 +550,6 @@ export const OptimizedDashboard: React.FC = () => {
 
       {/* Global Market Stats */}
       <GlobalStatsSection stats={globalStats} />
-
-      {/* Description Section */}
-      <DescriptionSection />
 
       {/* Main Content */}
       <div className="flex-1">

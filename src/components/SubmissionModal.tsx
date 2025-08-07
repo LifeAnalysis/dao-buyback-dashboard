@@ -16,26 +16,14 @@ interface SubmissionModalProps {
 interface SubmissionData {
   companyName: string;
   tickerSymbol: string;
-  category: string;
   websiteUrl: string;
   twitter: string;
-  currentEthReserve: string;
   submitterContact: string;
   briefDescription: string;
   walletAddresses: string;
 }
 
-const categories = [
-  'DeFi Protocol',
-  'Layer 1/Layer 2',
-  'Infrastructure',
-  'DAO',
-  'Gaming',
-  'NFT',
-  'RWA',
-  'AI/ML',
-  'Other'
-];
+
 
 
 
@@ -47,10 +35,8 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
   const [formData, setFormData] = useState<SubmissionData>({
     companyName: '',
     tickerSymbol: '',
-    category: '',
     websiteUrl: '',
     twitter: '',
-    currentEthReserve: '',
     submitterContact: '',
     briefDescription: '',
     walletAddresses: ''
@@ -75,14 +61,6 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
       newErrors.companyName = 'Company name is required';
     }
 
-    if (!formData.category) {
-      newErrors.category = 'Category is required';
-    }
-
-    if (!formData.currentEthReserve.trim()) {
-      newErrors.currentEthReserve = 'Current ETH reserve is required';
-    }
-
     if (!formData.submitterContact.trim()) {
       newErrors.submitterContact = 'Contact information is required';
     }
@@ -99,10 +77,8 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
       setFormData({
         companyName: '',
         tickerSymbol: '',
-        category: '',
         websiteUrl: '',
         twitter: '',
-        currentEthReserve: '',
         submitterContact: '',
         briefDescription: '',
         walletAddresses: ''
@@ -186,30 +162,6 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                     </div>
                   </div>
 
-                  {/* Category */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                      Category *
-                    </label>
-                    <select
-                      value={formData.category}
-                      onChange={(e) => handleInputChange('category', e.target.value)}
-                      className={`w-full px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all ${
-                        errors.category ? 'border-red-500' : 'border-gray-700'
-                      }`}
-                    >
-                      <option value="" className="bg-[#1a1a1a] text-gray-400">Select a category</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category} className="bg-[#1a1a1a] text-white">
-                          {category}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.category && (
-                      <p className="text-red-400 text-xs mt-1">{errors.category}</p>
-                    )}
-                  </div>
-
                   {/* Website & Twitter */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -238,42 +190,23 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                     </div>
                   </div>
 
-                  {/* ETH Reserve & Contact */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                        Current ETH Reserve *
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.currentEthReserve}
-                        onChange={(e) => handleInputChange('currentEthReserve', e.target.value)}
-                        className={`w-full px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all ${
-                          errors.currentEthReserve ? 'border-red-500' : 'border-gray-700'
-                        }`}
-                        placeholder="Minimum 100 ETH"
-                      />
-                      {errors.currentEthReserve && (
-                        <p className="text-red-400 text-xs mt-1">{errors.currentEthReserve}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                        Submitter's Contact *
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.submitterContact}
-                        onChange={(e) => handleInputChange('submitterContact', e.target.value)}
-                        className={`w-full px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all ${
-                          errors.submitterContact ? 'border-red-500' : 'border-gray-700'
-                        }`}
-                        placeholder="Telegram/Email"
-                      />
-                      {errors.submitterContact && (
-                        <p className="text-red-400 text-xs mt-1">{errors.submitterContact}</p>
-                      )}
-                    </div>
+                  {/* Contact */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
+                      Submitter's Contact *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.submitterContact}
+                      onChange={(e) => handleInputChange('submitterContact', e.target.value)}
+                      className={`w-full px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all ${
+                        errors.submitterContact ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                      placeholder="Telegram/Email"
+                    />
+                    {errors.submitterContact && (
+                      <p className="text-red-400 text-xs mt-1">{errors.submitterContact}</p>
+                    )}
                   </div>
 
                   {/* Brief Description */}
