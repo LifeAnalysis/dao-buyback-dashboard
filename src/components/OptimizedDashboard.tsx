@@ -51,6 +51,7 @@ import { OptimizedDataService } from '../services/optimizedDataService';
 import { Header } from './layout/Header';
 import { Footer } from './layout/Footer';
 import { OptimizedChart } from './charts/OptimizedChart';
+import { ProtocolPerformanceChart } from './charts/ProtocolPerformanceChart';
 import { ProtocolLogoImage } from './ProtocolLogo';
 import { SubmissionModal } from './SubmissionModal';
 
@@ -635,6 +636,17 @@ export const OptimizedDashboard: React.FC = () => {
                 onProtocolSelect={handleProtocolSelect}
               />
             </div>
+          </div>
+
+          {/* Enhanced Protocol Performance Chart */}
+          <div className="mt-8">
+            <ProtocolPerformanceChart
+              data={state.buybackData}
+              title="Protocol Performance Comparison"
+              height={350}
+              showComparisons={true}
+              metric="totalValueUSD"
+            />
           </div>
 
           {/* Protocol Table */}

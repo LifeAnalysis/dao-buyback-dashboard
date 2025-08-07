@@ -3,7 +3,7 @@
  * High-performance, clean chart implementation with proper error handling and memoization
  */
 
-import React, { useState, useMemo, memo, useCallback } from 'react';
+import React, { useState, useMemo, memo, useCallback, useEffect } from 'react';
 import {
   AreaChart,
   Area,
@@ -61,28 +61,50 @@ const CustomTooltip = memo<TooltipProps>(({ active, payload, label, timeframe = 
   if (!active || !payload || !payload.length) return null;
 
   return (
-    <div
-      className="rounded-lg p-3 shadow-lg border"
+    <motion.div
+      className="rounded-xl p-4 shadow-2xl border backdrop-blur-md"
       style={{
-        backgroundColor: THEME_COLORS.DARK_BLACK,
-        borderColor: CHART_COLORS.PRIMARY,
-        boxShadow: `0 10px 25px -5px ${CHART_COLORS.PRIMARY}1a`,
+        backgroundColor: 'rgba(17, 24, 39, 0.95)',
+        borderColor: 'rgba(107, 114, 128, 0.3)',
+        boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.8)`,
       }}
+      initial={{ opacity: 0, scale: 0.9, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: 10 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
     >
-      <p className="text-xs font-mono mb-2" style={{ color: CHART_COLORS.PRIMARY }}>
+      <p className="text-sm font-semibold mb-3 pb-2 border-b border-gray-700/30 text-white">
         {label ? formatChartDateByTimeframe(label, timeframe) : 'No date'}
       </p>
-      {payload.map((entry, index: number) => (
-        <p key={index} className="text-xs font-mono" style={{ color: entry.color }}>
-          {`${entry.name}: ${
-            (() => {
-              const formatter = entry.dataKey === 'tokensBought' ? formatVolume : formatCurrency;
-              return formatter(entry.value);
-            })()
-          }`}
-        </p>
-      ))}
-    </div>
+      <div className="space-y-2">
+        {payload.map((entry, index: number) => (
+          <motion.div 
+            key={index} 
+            className="flex items-center justify-between gap-4"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2, delay: index * 0.05 }}
+          >
+            <div className="flex items-center gap-2">
+              <div 
+                className="w-3 h-3 rounded-full shadow-sm" 
+                style={{ 
+                  backgroundColor: entry.color,
+                  boxShadow: `0 0 8px ${entry.color}40`
+                }}
+              />
+              <span className="text-gray-300 text-sm font-medium">{entry.name}</span>
+            </div>
+            <span className="text-white font-mono font-bold text-sm">
+              {(() => {
+                const formatter = entry.dataKey === 'tokensBought' ? formatVolume : formatCurrency;
+                return formatter(entry.value);
+              })()}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
   );
 });
 
@@ -248,6 +270,47 @@ export const OptimizedChart = memo<ChartProps>(({
 }) => {
   const [activeChart, setActiveChart] = useState<ChartType>('buybacks');
   const [timeframe, setTimeframe] = useState<TimeframeOption>('30D');
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  // Handle window resize for responsiveness
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Responsive breakpoints
+  const isMobile = windowWidth < 640;
+  const isTablet = windowWidth < 1024;
+
+  // Responsive chart configuration
+  const chartConfig = useMemo(() => {
+    if (isMobile) {
+      return {
+        margin: { top: 10, right: 10, left: 10, bottom: 20 },
+        barSize: 20,
+        fontSize: 10,
+        tickInterval: 2,
+        showLabels: false
+      };
+    } else if (isTablet) {
+      return {
+        margin: { top: 15, right: 20, left: 15, bottom: 25 },
+        barSize: 25,
+        fontSize: 11,
+        tickInterval: 1,
+        showLabels: true
+      };
+    } else {
+      return {
+        margin: { top: 20, right: 30, left: 20, bottom: 30 },
+        barSize: 30,
+        fontSize: 12,
+        tickInterval: 0,
+        showLabels: true
+      };
+    }
+  }, [isMobile, isTablet]);
 
   // Memoized calculations
   const { currentValue, change24h, chartData } = useMemo(() => {
@@ -331,7 +394,7 @@ export const OptimizedChart = memo<ChartProps>(({
           {showVolume && activeChart === 'buybacks' ? (
             <ComposedChart 
               data={chartData} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              margin={chartConfig.margin}
             >
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -411,7 +474,7 @@ export const OptimizedChart = memo<ChartProps>(({
                 fill="url(#revenueGradient)"
                 opacity={0.8}
                 radius={[6, 6, 0, 0]}
-                maxBarSize={30}
+                maxBarSize={chartConfig.barSize}
                 animationBegin={200}
                 animationDuration={800}
               />

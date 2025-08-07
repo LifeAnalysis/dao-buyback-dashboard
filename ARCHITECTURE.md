@@ -4,28 +4,45 @@
 
 This project has been completely refactored to follow enterprise-level best practices with a focus on maintainability, performance, and scalability.
 
+## 🧹 Recent Major Cleanup (January 2025)
+
+The codebase underwent a comprehensive cleanup that resulted in:
+- **Removed 3,908 lines of redundant code** 
+- **Deleted 13 unused components** (6 dashboards, 5 charts, 2 sections)
+- **Consolidated dual data services** into single, robust OptimizedDataService
+- **Enhanced documentation** with comprehensive JSDoc and inline comments
+- **Improved type safety** and removed deprecated fields
+- **Single source of truth architecture** with clear component hierarchy
+
 ## 📁 Project Structure
 
 ```
 src/
 ├── components/           # React components
-│   ├── layout/          # Layout components (Header, Footer)
-│   ├── charts/          # Chart components
-│   └── OptimizedDashboard.tsx
+│   ├── layout/          # Layout components (Header, Footer, Sidebar)
+│   ├── charts/          # Chart components (OptimizedChart only)
+│   ├── OptimizedDashboard.tsx  # Main dashboard component
+│   ├── ProtocolLogo.tsx        # Logo component
+│   ├── ProtocolCard.tsx        # Card component
+│   ├── SubmissionModal.tsx     # Modal component
+│   ├── LiveIndicator.tsx       # Status indicator
+│   └── MetricCard.tsx          # Metric display component
 ├── constants/           # Centralized configuration
 │   └── index.ts        # All constants and configuration
 ├── utils/              # Utility functions
 │   ├── formatters.ts   # Number/currency formatting
 │   └── helpers.ts      # General helper functions
 ├── services/           # Business logic and API services
-│   ├── dataService.ts  # Legacy service (deprecated)
-│   └── optimizedDataService.ts # New optimized service
+│   ├── optimizedDataService.ts # Unified service with real data integration
+│   ├── aaveScrapingService.ts  # Aave TokenLogic API integration
+│   ├── pumpFunScrapingService.ts # PumpFun API integration
+│   └── mcpService.ts           # MCP service integration
 ├── database/           # Data persistence layer
 │   └── browserDb.ts    # LocalStorage-based database
 ├── types/              # TypeScript type definitions
 │   └── index.ts        # All interfaces and types
-└── config/             # Legacy configuration (to be deprecated)
-    └── protocols.ts    # DAO configurations
+└── config/             # DAO configuration data
+    └── protocols.ts    # DAO configurations and mock data
 ```
 
 ## 🎯 Key Architectural Improvements
@@ -71,11 +88,15 @@ src/
   - Local storage helpers
   - Cache management utilities
 
-### 5. **Optimized Data Service**
-- **File**: `src/services/optimizedDataService.ts`
+### 5. **Unified Data Service Architecture**
+- **Main Service**: `src/services/optimizedDataService.ts`
+- **Real Data Integrations**: 
+  - `aaveScrapingService.ts` - Aave TokenLogic API
+  - `pumpFunScrapingService.ts` - PumpFun fees API
 - **Features**:
   - Singleton pattern for consistent state
   - Advanced caching with expiration
+  - Real-time data integration with fallback to mock data
   - Retry logic for failed requests
   - Comprehensive error handling
   - Health check functionality
