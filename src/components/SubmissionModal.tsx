@@ -7,6 +7,14 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ANIMATION_DURATIONS } from '../constants';
 
+// Step definitions for progressive form
+const FORM_STEPS = [
+  { id: 1, title: 'Protocol Info', description: 'Basic protocol details' },
+  { id: 2, title: 'Contact & Links', description: 'How to reach you and find more info' },
+  { id: 3, title: 'Treasury Details', description: 'Buyback and wallet information' },
+  { id: 4, title: 'Review & Submit', description: 'Confirm your submission' }
+] as const;
+
 interface SubmissionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -43,6 +51,8 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Partial<SubmissionData>>({});
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = useCallback((
     field: keyof SubmissionData,
@@ -69,23 +79,291 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
     return Object.keys(newErrors).length === 0;
   }, [formData]);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      onSubmit(formData);
-      // Reset form
-      setFormData({
-        companyName: '',
-        tickerSymbol: '',
-        websiteUrl: '',
-        twitter: '',
-        submitterContact: '',
-        briefDescription: '',
-        walletAddresses: ''
-      });
-      onClose();
+  const nextStep = useCallback(() => {
+    if (currentStep < FORM_STEPS.length) {
+      setCurrentStep(prev => prev + 1);
     }
-  }, [formData, validateForm, onSubmit, onClose]);
+  }, [currentStep]);
+
+  const prevStep = useCallback(() => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+    }
+  }, [currentStep]);
+
+  const validateCurrentStep = useCallback((): boolean => {
+    const newErrors: Partial<SubmissionData> = {};
+
+    if (currentStep === 1) {
+      if (!formData.companyName.trim()) {
+        newErrors.companyName = 'Protocol name is required';
+      }
+    } else if (currentStep === 2) {
+      if (!formData.submitterContact.trim()) {
+        newErrors.submitterContact = 'Contact information is required';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData, currentStep]);
+
+  const handleNext = useCallback(() => {
+    if (validateCurrentStep()) {
+      nextStep();
+    }
+  }, [validateCurrentStep, nextStep]);
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (currentStep === FORM_STEPS.length && validateForm()) {
+      setIsSubmitting(true);
+      try {
+        await onSubmit(formData);
+        // Reset form
+        setFormData({
+          companyName: '',
+          tickerSymbol: '',
+          websiteUrl: '',
+          twitter: '',
+          submitterContact: '',
+          briefDescription: '',
+          walletAddresses: ''
+        });
+        setCurrentStep(1);
+        onClose();
+      } catch (error) {
+        console.error('Submission failed:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else if (currentStep < FORM_STEPS.length) {
+      handleNext();
+    }
+  }, [formData, validateForm, onSubmit, onClose, currentStep, handleNext]);
+
+  // Render form content based on current step
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            {/* Protocol Name & Token Symbol */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-white mb-3 font-mono">
+                  Protocol Name *
+                  <span className="text-xs text-gray-400 font-normal ml-2">(e.g., Aave, Uniswap)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.companyName}
+                  onChange={(e) => handleInputChange('companyName', e.target.value)}
+                  className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono ${
+                    errors.companyName ? 'border-red-500 focus:ring-red-400 focus:border-red-400' : 'border-gray-800 hover:border-gray-700'
+                  }`}
+                  placeholder="Enter protocol name"
+                  style={{
+                    boxShadow: errors.companyName 
+                      ? '0 0 0 1px rgba(239, 68, 68, 0.1)' 
+                      : '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                  }}
+                />
+                {errors.companyName && (
+                  <p className="text-red-400 text-xs mt-1">{errors.companyName}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-white mb-3 font-mono">
+                  Token Symbol
+                  <span className="text-xs text-gray-400 font-normal ml-2">(e.g., AAVE, UNI)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.tickerSymbol}
+                  onChange={(e) => handleInputChange('tickerSymbol', e.target.value)}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                  placeholder="TOKEN"
+                  style={{
+                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            {/* Website & Twitter */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-white mb-3 font-mono">
+                  Website URL
+                  <span className="text-xs text-gray-400 font-normal ml-2">(optional)</span>
+                </label>
+                <input
+                  type="url"
+                  value={formData.websiteUrl}
+                  onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                  placeholder="https://protocol.com"
+                  style={{
+                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-white mb-3 font-mono">
+                  Twitter Handle
+                  <span className="text-xs text-gray-400 font-normal ml-2">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.twitter}
+                  onChange={(e) => handleInputChange('twitter', e.target.value)}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                  placeholder="@protocol"
+                  style={{
+                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <label className="block text-sm font-bold text-white mb-3 font-mono">
+                Your Contact Info *
+                <span className="text-xs text-gray-400 font-normal ml-2">(Telegram, Email, Discord)</span>
+              </label>
+              <input
+                type="text"
+                value={formData.submitterContact}
+                onChange={(e) => handleInputChange('submitterContact', e.target.value)}
+                className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono ${
+                  errors.submitterContact ? 'border-red-500 focus:ring-red-400 focus:border-red-400' : 'border-gray-800 hover:border-gray-700'
+                }`}
+                placeholder="@username or email@domain.com"
+                style={{
+                  boxShadow: errors.submitterContact 
+                    ? '0 0 0 1px rgba(239, 68, 68, 0.1)' 
+                    : '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                }}
+              />
+              {errors.submitterContact && (
+                <p className="text-red-400 text-xs mt-1">{errors.submitterContact}</p>
+              )}
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            {/* Brief Description */}
+            <div>
+              <label className="block text-sm font-bold text-white mb-3 font-mono">
+                Protocol Description
+                <span className="text-xs text-gray-400 font-normal ml-2">(optional, will be posted on X)</span>
+              </label>
+              <textarea
+                value={formData.briefDescription}
+                onChange={(e) => handleInputChange('briefDescription', e.target.value)}
+                rows={4}
+                className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                placeholder="Brief description of your protocol and buyback strategy..."
+                style={{
+                  boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                }}
+              />
+            </div>
+
+            {/* Wallet Addresses */}
+            <div>
+              <label className="block text-sm font-bold text-white mb-3 font-mono">
+                Treasury Wallet Addresses
+                <span className="text-xs text-gray-400 font-normal ml-2">(optional, kept private)</span>
+              </label>
+              <textarea
+                value={formData.walletAddresses}
+                onChange={(e) => handleInputChange('walletAddresses', e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                placeholder="0xfoo,0xbar (comma-separated)"
+                style={{
+                  boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                }}
+              />
+              <p className="text-sm text-gray-400 mt-2 font-mono">
+                🔒 Wallet addresses are kept strictly confidential and never shared publicly
+              </p>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <div className="bg-[#0a0a0a] border border-gray-800 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-white mb-4 font-mono">Review Your Submission</h3>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono">Protocol Name</label>
+                    <p className="text-white font-mono">{formData.companyName || 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono">Token Symbol</label>
+                    <p className="text-white font-mono">{formData.tickerSymbol || 'Not provided'}</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono">Website</label>
+                    <p className="text-white font-mono">{formData.websiteUrl || 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono">Twitter</label>
+                    <p className="text-white font-mono">{formData.twitter || 'Not provided'}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-sm text-gray-400 font-mono">Contact</label>
+                  <p className="text-white font-mono">{formData.submitterContact || 'Not provided'}</p>
+                </div>
+                
+                {formData.briefDescription && (
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono">Description</label>
+                    <p className="text-white font-mono text-sm">{formData.briefDescription}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse mt-2 flex-shrink-0"></div>
+                <div>
+                  <p className="text-green-300 font-mono text-sm font-medium">What happens next?</p>
+                  <p className="text-green-200/80 text-xs mt-1 font-mono">
+                    Our team will review your submission within 24-48 hours. You'll receive an update via your provided contact method.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -147,9 +425,34 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                       <p className="text-gray-300 text-lg leading-relaxed">
                         Join the <span className="text-green-400 font-medium">DAO buyback movement</span> and help grow the ecosystem.
                       </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                        <p className="text-sm text-gray-400 font-mono">Reviewed within 24-48 hours</p>
+                      
+                      {/* Step Progress Indicator */}
+                      <div className="mt-6">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-sm font-mono text-gray-400">
+                            Step {currentStep} of {FORM_STEPS.length}
+                          </div>
+                          <div className="text-sm font-mono text-green-400">
+                            {FORM_STEPS[currentStep - 1]?.title}
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-1">
+                          {FORM_STEPS.map((step) => (
+                            <div
+                              key={step.id}
+                              className={`h-2 flex-1 rounded-full transition-all duration-300 ${
+                                step.id <= currentStep
+                                  ? 'bg-green-400'
+                                  : 'bg-gray-700'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        
+                        <p className="text-xs text-gray-500 mt-2 font-mono">
+                          {FORM_STEPS[currentStep - 1]?.description}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -166,128 +469,18 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                   </motion.button>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Company Name & Ticker */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-white mb-3 font-mono">
-                        Protocol Name *
-                        <span className="text-xs text-gray-400 font-normal ml-2">(e.g., Aave, Uniswap)</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.companyName}
-                        onChange={(e) => handleInputChange('companyName', e.target.value)}
-                        className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono ${
-                          errors.companyName ? 'border-red-500 focus:ring-red-400 focus:border-red-400' : 'border-gray-800 hover:border-gray-700'
-                        }`}
-                        placeholder="Enter protocol name"
-                        style={{
-                          boxShadow: errors.companyName 
-                            ? '0 0 0 1px rgba(239, 68, 68, 0.1)' 
-                            : '0 0 0 1px rgba(255, 255, 255, 0.05)'
-                        }}
-                      />
-                      {errors.companyName && (
-                        <p className="text-red-400 text-xs mt-1">{errors.companyName}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-white mb-3 font-mono">
-                        Token Symbol
-                        <span className="text-xs text-gray-400 font-normal ml-2">(e.g., AAVE, UNI)</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.tickerSymbol}
-                        onChange={(e) => handleInputChange('tickerSymbol', e.target.value)}
-                        className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
-                        placeholder="TOKEN"
-                        style={{
-                          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Website & Twitter */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                        Website URL
-                      </label>
-                      <input
-                        type="url"
-                        value={formData.websiteUrl}
-                        onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all"
-                        placeholder="https://example.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                        Twitter
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.twitter}
-                        onChange={(e) => handleInputChange('twitter', e.target.value)}
-                        className="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all"
-                        placeholder="@username"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Contact */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                      Submitter's Contact *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.submitterContact}
-                      onChange={(e) => handleInputChange('submitterContact', e.target.value)}
-                      className={`w-full px-3 py-2 bg-[#1a1a1a] border rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all ${
-                        errors.submitterContact ? 'border-red-500' : 'border-gray-700'
-                      }`}
-                      placeholder="Telegram/Email"
-                    />
-                    {errors.submitterContact && (
-                      <p className="text-red-400 text-xs mt-1">{errors.submitterContact}</p>
-                    )}
-                  </div>
-
-                  {/* Brief Description */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                      Brief blurb (Posted on X)
-                    </label>
-                    <textarea
-                      value={formData.briefDescription}
-                      onChange={(e) => handleInputChange('briefDescription', e.target.value)}
-                      rows={4}
-                      className="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all"
-                      placeholder="Enter a brief description or announcement..."
-                    />
-                  </div>
-
-                  {/* Wallet Addresses */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2 font-mono">
-                      Wallet Addresses
-                    </label>
-                    <textarea
-                      value={formData.walletAddresses}
-                      onChange={(e) => handleInputChange('walletAddresses', e.target.value)}
-                      rows={3}
-                      className="w-full px-3 py-2 bg-[#1a1a1a] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-[#222] transition-all"
-                      placeholder="0xfoo,0xbar"
-                    />
-                    <p className="text-sm text-gray-400 mt-1">
-                      Comma-separated list of addresses (kept private, never shared)
-                    </p>
-                  </div>
+                {/* Progressive Form */}
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Dynamic Form Content */}
+                  <motion.div
+                    key={currentStep}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {renderStepContent()}
+                  </motion.div>
 
                   {/* Enhanced Submit Button Section */}
                   <div className="pt-8 border-t border-gray-800">

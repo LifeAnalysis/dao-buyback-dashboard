@@ -19,6 +19,7 @@ import { Footer } from './layout/Footer';
 import { OptimizedChart } from './charts/OptimizedChart';
 import { ProtocolLogoImage } from './ProtocolLogo';
 import { SubmissionModal } from './SubmissionModal';
+import { AaveMetrics } from './AaveMetrics';
 import type { 
   BuybackData, 
   GlobalStats, 
@@ -108,12 +109,14 @@ interface ProtocolSelectorProps {
   protocols: BuybackData[];
   selectedProtocol: string;
   onProtocolSelect: (protocol: string) => void;
+  onAddProtocol?: () => void;
 }
 
 const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
   protocols,
   selectedProtocol,
-  onProtocolSelect
+  onProtocolSelect,
+  onAddProtocol
 }) => (
   <motion.div 
     className="dark-card"
@@ -158,6 +161,41 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
           </div>
         </button>
       ))}
+      
+      {/* Add Protocol Button */}
+      {onAddProtocol && (
+        <motion.button
+          onClick={onAddProtocol}
+          className="w-full p-3 border-2 border-dashed rounded-lg transition-all group mt-4"
+          style={{
+            borderColor: `${THEME_COLORS.PRIMARY_GREEN}30`,
+            backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}05`
+          }}
+          whileHover={{
+            borderColor: `${THEME_COLORS.PRIMARY_GREEN}60`,
+            backgroundColor: `${THEME_COLORS.PRIMARY_GREEN}10`
+          }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div className="flex items-center justify-center gap-3" style={{ color: THEME_COLORS.PRIMARY_GREEN }}>
+            <svg 
+              className="w-5 h-5 group-hover:scale-110 transition-transform" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M12 4v16m8-8H4" 
+              />
+            </svg>
+            <span className="font-mono font-medium">Add Your Protocol</span>
+          </div>
+          <div className="text-xs mt-1 opacity-70 font-mono">Join the DAO movement</div>
+        </motion.button>
+      )}
     </div>
   </motion.div>
 ));
@@ -574,6 +612,7 @@ export const OptimizedDashboard: React.FC = () => {
                 protocols={state.buybackData}
                 selectedProtocol={state.selectedProtocol}
                 onProtocolSelect={handleProtocolSelect}
+                onAddProtocol={handleModalOpen}
               />
             </div>
           </div>
@@ -589,6 +628,11 @@ export const OptimizedDashboard: React.FC = () => {
             onSortByChange={(sortBy) => setState(prev => ({ ...prev, sortBy }))}
             onSortOrderChange={(sortOrder) => setState(prev => ({ ...prev, sortOrder }))}
           />
+
+          {/* Aave TokenLogic Integration Showcase */}
+          <div className="mt-8">
+            <AaveMetrics />
+          </div>
         </div>
       </div>
 
@@ -602,29 +646,65 @@ export const OptimizedDashboard: React.FC = () => {
         onSubmit={handleSubmission}
       />
 
-      {/* Floating Submit Button */}
-      <button
+      {/* Enhanced Floating Submit Button */}
+      <motion.button
         onClick={handleModalOpen}
-        className="fixed bottom-8 right-8 z-40 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 group"
-        title="Submit Your Entity"
+        className="fixed bottom-8 right-8 z-40 font-mono font-bold rounded-xl shadow-2xl transition-all duration-300 group overflow-hidden"
+        style={{ 
+          background: `linear-gradient(135deg, ${THEME_COLORS.PRIMARY_GREEN}, ${THEME_COLORS.SECONDARY_GREEN})`,
+          boxShadow: `0 25px 50px -12px rgba(0, 255, 135, 0.3), 0 0 0 1px rgba(0, 255, 135, 0.1)`
+        }}
+        whileHover={{ y: -2, scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        title="Add Your Protocol to the DAO Buyback Movement"
       >
-        <svg 
-          className="w-6 h-6 transition-transform group-hover:rotate-12" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M12 4v16m8-8H4" 
-          />
-        </svg>
-        <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          Join the Movement
-        </span>
-      </button>
+        <div className="flex items-center gap-3 px-6 py-4 text-black">
+          {/* Treasury/Vault icon */}
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            className="group-hover:scale-110 transition-transform duration-300"
+          >
+            {/* Building/Treasury structure */}
+            <rect x="2" y="8" width="20" height="12" rx="1" fill="currentColor" opacity="0.9"/>
+            <rect x="4" y="10" width="2" height="6" fill="white" opacity="0.8"/>
+            <rect x="7" y="10" width="2" height="6" fill="white" opacity="0.8"/>
+            <rect x="10" y="10" width="2" height="6" fill="white" opacity="0.8"/>
+            <rect x="13" y="10" width="2" height="6" fill="white" opacity="0.8"/>
+            <rect x="16" y="10" width="2" height="6" fill="white" opacity="0.8"/>
+            {/* Roof/Top */}
+            <path d="M1 8L12 2L23 8H1Z" fill="currentColor"/>
+            {/* Central vault door */}
+            <circle cx="12" cy="14" r="2" fill="white" opacity="0.9"/>
+            <circle cx="12" cy="14" r="1" fill="currentColor" opacity="0.3"/>
+            {/* Plus icon overlay */}
+            <path d="M12 4v16m8-8H4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+          </svg>
+          
+          <div className="text-left">
+            <div className="text-sm font-bold leading-tight">Add Protocol</div>
+            <div className="text-xs opacity-80 leading-tight">Join the Movement</div>
+          </div>
+        </div>
+        
+        {/* Animated glow effect */}
+        <div 
+          className="absolute inset-0 rounded-xl opacity-20 animate-pulse group-hover:opacity-30 transition-opacity duration-300"
+          style={{ 
+            background: `radial-gradient(circle at center, ${THEME_COLORS.PRIMARY_GREEN}, transparent)` 
+          }} 
+        />
+        
+        {/* Enhanced tooltip */}
+        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-[#0a0a0a] border border-gray-800 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 font-mono shadow-lg"
+             style={{ boxShadow: `0 10px 25px -5px rgba(0, 255, 135, 0.1)` }}>
+          <div className="font-medium">Submit Your DAO Protocol</div>
+          <div className="text-xs text-gray-400 mt-1">Help grow the ecosystem</div>
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+        </div>
+      </motion.button>
     </div>
   );
 };
