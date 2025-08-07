@@ -86,9 +86,7 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
         <h1 className="text-2xl font-semibold text-white mb-2">
           Treasury Analytics
         </h1>
-        <p className="text-sm text-gray-400 max-w-2xl mx-auto">
-          Strategic token buybacks across leading decentralized autonomous organizations
-        </p>
+
       </div>
       
       {/* Stats Container */}
@@ -154,13 +152,13 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: ANIMATION_DELAYS.LONG, duration: ANIMATION_DURATIONS.NORMAL }}
   >
-    <h3 className="text-xl font-semibold text-white mb-6 font-mono">Select DAO</h3>
-    <div className="space-y-3">
+    <h3 className="text-lg font-semibold text-white mb-4 font-mono">Select DAO</h3>
+    <div className="space-y-2">
       {protocols.map((protocol) => (
         <button
           key={protocol.protocol}
           onClick={() => onProtocolSelect(protocol.protocol)}
-          className={`w-full text-left p-5 rounded-xl transition-all duration-200 ${
+          className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
             selectedProtocol === protocol.protocol
               ? 'border bg-opacity-15 hover:bg-opacity-25'
               : 'border border-gray-700/50 hover:border-gray-600/70 hover:bg-gray-800/30'
@@ -174,34 +172,34 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
               : {}
           }
         >
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
-                <ProtocolLogoImage protocol={protocol.protocol} size="md" />
+                <ProtocolLogoImage protocol={protocol.protocol} size="sm" />
               </div>
               <div className="flex-1">
-                <div className="font-semibold text-white text-base leading-tight">
+                <div className="font-medium text-white text-sm leading-tight">
                   {protocol.protocol}
                 </div>
-                <div className="text-sm text-gray-400 mt-1">
+                <div className="text-xs text-gray-400">
                   {protocol.token}
                 </div>
               </div>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center text-xs">
               <div className="text-left">
-                <div className="text-xs text-gray-500 uppercase tracking-wide">Value</div>
-                <div className="font-semibold text-white font-mono text-sm leading-tight">
+                <div className="text-gray-500 mb-0.5">Value</div>
+                <div className="font-medium text-white font-mono">
                   {formatCurrency(protocol.totalValueUSD)}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-gray-500 uppercase tracking-wide">Supply Reduced</div>
+                <div className="text-gray-500 mb-0.5">Supply -</div>
                 <div 
-                  className="text-sm font-medium leading-tight"
+                  className="font-medium"
                   style={{ color: THEME_COLORS.PRIMARY_GREEN }}
                 >
-                  +{protocol.circulatingSupplyPercent}%
+                  {protocol.circulatingSupplyPercent}%
                 </div>
               </div>
             </div>
@@ -634,9 +632,7 @@ export const OptimizedDashboard: React.FC = () => {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
               DAO Treasury <span className="text-green-400">Analytics</span>
             </h1>
-            <p className="text-gray-400 text-lg">
-              Strategic token buybacks across leading decentralized autonomous organizations
-            </p>
+
           </motion.div>
           <GlobalStatsSection stats={globalStats} />
         </div>
