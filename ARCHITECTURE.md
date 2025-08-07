@@ -25,7 +25,7 @@ src/
 ├── types/              # TypeScript type definitions
 │   └── index.ts        # All interfaces and types
 └── config/             # Legacy configuration (to be deprecated)
-    └── protocols.ts    # Protocol configurations
+    └── protocols.ts    # DAO configurations
 ```
 
 ## 🎯 Key Architectural Improvements
@@ -145,7 +145,7 @@ API Request → Check Cache → Return Cached Data OR Fetch New Data → Update 
 ## 🔧 Configuration Management
 
 ### 1. **Constants Structure**
-- **Protocol Configuration**: Token symbols, colors, API IDs
+- **DAO Configuration**: Token symbols, colors, API IDs
 - **UI Configuration**: Animation timings, sizes, themes
 - **API Configuration**: Endpoints, timeouts, retry counts
 - **Cache Configuration**: TTL values, storage keys
@@ -282,7 +282,7 @@ const formatted = formatCurrency(num);
 - [ ] Performance audits
 
 ### Configuration Updates
-- [ ] Protocol additions in `constants/index.ts`
+- [ ] DAO additions in `constants/index.ts`
 - [ ] Color scheme updates in theme constants
 - [ ] API endpoint changes in service configuration
 - [ ] Cache duration adjustments based on usage patterns

@@ -6,17 +6,17 @@ This document details all hardcoded values found in the codebase and how they we
 
 ## 📊 Categories of Hardcoded Values Found
 
-### 1. **Protocol Configuration** ❌→✅
+### 1. **DAO Configuration** ❌→✅
 **Issues Found:**
 - Token symbols scattered across multiple files (`'HYPE', 'JUP', 'AAVE'`)
-- Protocol names hardcoded in switch statements
+- DAO names hardcoded in switch statements
 - Colors defined inline (`#00D4AA`, `#FFA500`, etc.)
 - API endpoints hardcoded in services
 
 **Solution:**
 - Centralized in `src/constants/index.ts`
-- Created `PROTOCOL_TOKENS`, `PROTOCOL_COLORS`, `COINGECKO_IDS` constants
-- Single source of truth for all protocol configuration
+- Created `DAO_TOKENS`, `DAO_COLORS`, `COINGECKO_IDS` constants
+- Single source of truth for all DAO configuration
 
 ### 2. **UI/Theme Values** ❌→✅
 **Issues Found:**
@@ -35,13 +35,13 @@ This document details all hardcoded values found in the codebase and how they we
 - Cache duration: `5 * 60 * 1000` (5 minutes)
 - API timeout: `5000` milliseconds
 - Chart heights: `400`, `300`, `200`
-- Protocol count expectations: `7`
+- DAO count expectations: `7`
 
 **Solution:**
 - `CACHE_DURATIONS` with semantic names (SHORT, MEDIUM, LONG)
 - `API_TIMEOUTS` configuration
 - `CHART_HEIGHTS` with named sizes
-- `EXPECTED_PROTOCOL_COUNT` constant
+- `EXPECTED_DAO_COUNT` constant
 
 ### 4. **String Literals** ❌→✅
 **Issues Found:**
@@ -85,12 +85,12 @@ const formatCurrency = (num: number) => {
 
 **After:**
 ```typescript
-import { PROTOCOL_COLORS, SORT_OPTIONS } from '../constants';
+import { DAO_COLORS, SORT_OPTIONS } from '../constants';
 import { formatCurrency } from '../utils/formatters';
-import { getProtocolColor } from '../utils/helpers';
+import { getDAOColor } from '../utils/helpers';
 
 // Colors from constants
-const color = getProtocolColor(protocol);
+const color = getDAOColor(dao);
 
 // Sort options from constants with proper typing
 const [sortBy, setSortBy] = useState<SortOption>('marketCap');
@@ -113,9 +113,9 @@ const CACHE_DURATION = 5 * 60 * 1000; // Magic number
 
 **After:**
 ```typescript
-import { PROTOCOL_TOKENS, MOCK_PRICES, CACHE_DURATIONS } from '../constants';
+import { DAO_TOKENS, MOCK_PRICES, CACHE_DURATIONS } from '../constants';
 
-const tokens = PROTOCOL_TOKENS; // From constants
+const tokens = DAO_TOKENS; // From constants
 const prices = MOCK_PRICES; // Centralized mock data
 const cacheDuration = CACHE_DURATIONS.MEDIUM; // Semantic naming
 ```
@@ -131,11 +131,11 @@ const protocols = [
 
 **After:**
 ```typescript
-import { PROTOCOL_TOKENS, MOCK_PRICES, BASE_VOLUMES } from '../constants';
+import { DAO_TOKENS, MOCK_PRICES, BASE_VOLUMES } from '../constants';
 
 // Generated from constants to ensure consistency
-const protocols = PROTOCOL_TOKENS.map(token => ({
-  name: getProtocolFromToken(token),
+const daos = DAO_TOKENS.map(token => ({
+  name: getDAOFromToken(token),
   token,
   basePrice: MOCK_PRICES[getCoingeckoId(token)],
   baseVolume: BASE_VOLUMES[token]
@@ -160,7 +160,7 @@ const protocols = PROTOCOL_TOKENS.map(token => ({
 - Consistent formatting throughout the app
 
 ### 4. **Scalability**
-- Easy to add new protocols by updating constants
+- Easy to add new DAOs by updating constants
 - Theme changes require only constant updates
 - Configuration changes don't require code modifications
 
@@ -188,13 +188,13 @@ const protocols = PROTOCOL_TOKENS.map(token => ({
 
 ## 📋 Maintenance Checklist
 
-### When Adding New Protocols:
-- [ ] Add token to `PROTOCOL_TOKENS` array
-- [ ] Add color to `PROTOCOL_COLORS` object
+### When Adding New DAOs:
+- [ ] Add token to `DAO_TOKENS` array
+- [ ] Add color to `DAO_COLORS` object
 - [ ] Add CoinGecko ID to `COINGECKO_IDS` object
 - [ ] Add mock price to `MOCK_PRICES` object
 - [ ] Add base volume to `BASE_VOLUMES` object
-- [ ] Update logo mapping in `ProtocolLogo.tsx`
+- [ ] Update logo mapping in `DAOLogo.tsx`
 
 ### When Updating Theme:
 - [ ] Update colors in `THEME_COLORS` constant

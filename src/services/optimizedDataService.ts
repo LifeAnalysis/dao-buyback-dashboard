@@ -5,12 +5,14 @@
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { 
+  DAO_TOKENS,
   PROTOCOL_TOKENS, 
   COINGECKO_IDS, 
   MOCK_PRICES, 
   API_ENDPOINTS,
   API_TIMEOUTS,
   CACHE_DURATIONS,
+  EXPECTED_DAO_COUNT,
   EXPECTED_PROTOCOL_COUNT 
 } from '../constants';
 import { 

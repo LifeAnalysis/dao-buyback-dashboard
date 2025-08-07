@@ -2,13 +2,18 @@
  * Utility helper functions for common operations
  */
 
-import { VALIDATION_LIMITS, PROTOCOL_COLORS, PROTOCOL_TOKENS, COINGECKO_IDS } from '../constants';
-import type { ProtocolToken, SortOrder } from '../constants';
+import { VALIDATION_LIMITS, DAO_COLORS, DAO_TOKENS, PROTOCOL_COLORS, PROTOCOL_TOKENS, COINGECKO_IDS } from '../constants';
+import type { DAOToken, ProtocolToken, SortOrder } from '../constants';
 
 /**
  * Type guards and validation functions
  */
 
+export const isValidDAOToken = (token: string): token is DAOToken => {
+  return DAO_TOKENS.includes(token as DAOToken);
+};
+
+// Backward compatibility
 export const isValidProtocolToken = (token: string): token is ProtocolToken => {
   return PROTOCOL_TOKENS.includes(token as ProtocolToken);
 };
@@ -21,24 +26,34 @@ export const isValidVolume = (volume: number): boolean => {
   return volume >= VALIDATION_LIMITS.MIN_VOLUME && volume <= VALIDATION_LIMITS.MAX_VOLUME;
 };
 
+export const isValidDAOCount = (count: number): boolean => {
+  return count >= VALIDATION_LIMITS.MIN_DAO_COUNT && count <= VALIDATION_LIMITS.MAX_DAO_COUNT;
+};
+
+// Backward compatibility
 export const isValidProtocolCount = (count: number): boolean => {
-  return count >= VALIDATION_LIMITS.MIN_PROTOCOL_COUNT && count <= VALIDATION_LIMITS.MAX_PROTOCOL_COUNT;
+  return count >= VALIDATION_LIMITS.MIN_DAO_COUNT && count <= VALIDATION_LIMITS.MAX_DAO_COUNT;
 };
 
 /**
- * Protocol-related helper functions
+ * DAO-related helper functions
  */
 
-export const getProtocolColor = (protocol: string): string => {
-  return PROTOCOL_COLORS[protocol as keyof typeof PROTOCOL_COLORS] || '#16a34a';
+export const getDAOColor = (dao: string): string => {
+  return DAO_COLORS[dao as keyof typeof DAO_COLORS] || '#16a34a';
 };
 
-export const getCoingeckoId = (token: ProtocolToken): string => {
+// Backward compatibility
+export const getProtocolColor = (protocol: string): string => {
+  return DAO_COLORS[protocol as keyof typeof DAO_COLORS] || '#16a34a';
+};
+
+export const getCoingeckoId = (token: DAOToken): string => {
   return COINGECKO_IDS[token];
 };
 
-export const getProtocolFromToken = (token: ProtocolToken): string => {
-  const protocolMap: Record<ProtocolToken, string> = {
+export const getDAOFromToken = (token: DAOToken): string => {
+  const daoMap: Record<DAOToken, string> = {
     HYPE: 'Hyperliquid',
     JUP: 'Jupiter',
     AAVE: 'Aave',
@@ -47,7 +62,12 @@ export const getProtocolFromToken = (token: ProtocolToken): string => {
     DBR: 'DeBridge',
     FLUID: 'Fluid',
   };
-  return protocolMap[token];
+  return daoMap[token];
+};
+
+// Backward compatibility
+export const getProtocolFromToken = (token: ProtocolToken): string => {
+  return getDAOFromToken(token as DAOToken);
 };
 
 /**

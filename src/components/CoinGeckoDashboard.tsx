@@ -269,7 +269,7 @@ export const CoinGeckoDashboard: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
             >
-              <h3 className="text-lg font-semibold text-white mb-4 font-mono">Select Protocol</h3>
+              <h3 className="text-lg font-semibold text-white mb-4 font-mono">Select DAO</h3>
               <div className="space-y-2">
                 {buybackData.map((protocol) => (
                   <button
@@ -316,7 +316,7 @@ export const CoinGeckoDashboard: React.FC = () => {
         >
           <div className="dark-card overflow-hidden">
             <div className="px-6 py-4" style={{ borderBottom: '1px solid #1a1a1a' }}>
-              <h3 className="text-lg font-semibold text-white font-mono">Protocol Buyback Rankings</h3>
+              <h3 className="text-lg font-semibold text-white font-mono">DAO Buyback Rankings</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

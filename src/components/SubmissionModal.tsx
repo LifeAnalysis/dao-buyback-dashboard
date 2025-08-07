@@ -54,6 +54,28 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Reset form when modal closes
+  const resetForm = useCallback(() => {
+    setFormData({
+      companyName: '',
+      tickerSymbol: '',
+      websiteUrl: '',
+      twitter: '',
+      submitterContact: '',
+      briefDescription: '',
+      walletAddresses: ''
+    });
+    setErrors({});
+    setCurrentStep(1);
+    setIsSubmitting(false);
+  }, []);
+
+  // Enhanced close handler
+  const handleClose = useCallback(() => {
+    resetForm();
+    onClose();
+  }, [resetForm, onClose]);
+
   const handleInputChange = useCallback((
     field: keyof SubmissionData,
     value: string
@@ -97,10 +119,30 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
     if (currentStep === 1) {
       if (!formData.companyName.trim()) {
         newErrors.companyName = 'Protocol name is required';
+      } else if (formData.companyName.trim().length < 2) {
+        newErrors.companyName = 'Protocol name must be at least 2 characters';
+      }
+      
+      if (formData.tickerSymbol && formData.tickerSymbol.length > 10) {
+        newErrors.tickerSymbol = 'Token symbol should be 10 characters or less';
       }
     } else if (currentStep === 2) {
       if (!formData.submitterContact.trim()) {
         newErrors.submitterContact = 'Contact information is required';
+      } else if (formData.submitterContact.trim().length < 3) {
+        newErrors.submitterContact = 'Contact information must be at least 3 characters';
+      }
+      
+      if (formData.websiteUrl && formData.websiteUrl.trim()) {
+        try {
+          new URL(formData.websiteUrl);
+        } catch {
+          newErrors.websiteUrl = 'Please enter a valid URL (including http:// or https://)';
+        }
+      }
+      
+      if (formData.twitter && formData.twitter.trim() && !formData.twitter.startsWith('@')) {
+        newErrors.twitter = 'Twitter handle should start with @';
       }
     }
 
@@ -131,7 +173,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
           walletAddresses: ''
         });
         setCurrentStep(1);
-        onClose();
+        handleClose();
       } catch (error) {
         console.error('Submission failed:', error);
       } finally {
@@ -140,7 +182,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
     } else if (currentStep < FORM_STEPS.length) {
       handleNext();
     }
-  }, [formData, validateForm, onSubmit, onClose, currentStep, handleNext]);
+  }, [formData, validateForm, onSubmit, handleClose, currentStep, handleNext]);
 
   // Render form content based on current step
   const renderStepContent = () => {
@@ -182,12 +224,19 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                   type="text"
                   value={formData.tickerSymbol}
                   onChange={(e) => handleInputChange('tickerSymbol', e.target.value)}
-                  className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                  className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono ${
+                    errors.tickerSymbol ? 'border-red-500 focus:ring-red-400 focus:border-red-400' : 'border-gray-800 hover:border-gray-700'
+                  }`}
                   placeholder="TOKEN"
                   style={{
-                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                    boxShadow: errors.tickerSymbol 
+                      ? '0 0 0 1px rgba(239, 68, 68, 0.1)' 
+                      : '0 0 0 1px rgba(255, 255, 255, 0.05)'
                   }}
                 />
+                {errors.tickerSymbol && (
+                  <p className="text-red-400 text-xs mt-1">{errors.tickerSymbol}</p>
+                )}
               </div>
             </div>
           </div>
@@ -207,12 +256,19 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                   type="url"
                   value={formData.websiteUrl}
                   onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
-                  className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                  className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono ${
+                    errors.websiteUrl ? 'border-red-500 focus:ring-red-400 focus:border-red-400' : 'border-gray-800 hover:border-gray-700'
+                  }`}
                   placeholder="https://protocol.com"
                   style={{
-                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                    boxShadow: errors.websiteUrl 
+                      ? '0 0 0 1px rgba(239, 68, 68, 0.1)' 
+                      : '0 0 0 1px rgba(255, 255, 255, 0.05)'
                   }}
                 />
+                {errors.websiteUrl && (
+                  <p className="text-red-400 text-xs mt-1">{errors.websiteUrl}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-bold text-white mb-3 font-mono">
@@ -223,12 +279,19 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                   type="text"
                   value={formData.twitter}
                   onChange={(e) => handleInputChange('twitter', e.target.value)}
-                  className="w-full px-4 py-3 bg-[#0a0a0a] border border-gray-800 hover:border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono"
+                  className={`w-full px-4 py-3 bg-[#0a0a0a] border rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:border-green-400 focus:bg-[#151515] transition-all font-mono ${
+                    errors.twitter ? 'border-red-500 focus:ring-red-400 focus:border-red-400' : 'border-gray-800 hover:border-gray-700'
+                  }`}
                   placeholder="@protocol"
                   style={{
-                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.05)'
+                    boxShadow: errors.twitter 
+                      ? '0 0 0 1px rgba(239, 68, 68, 0.1)' 
+                      : '0 0 0 1px rgba(255, 255, 255, 0.05)'
                   }}
                 />
+                {errors.twitter && (
+                  <p className="text-red-400 text-xs mt-1">{errors.twitter}</p>
+                )}
               </div>
             </div>
 
@@ -376,7 +439,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: ANIMATION_DURATIONS.FAST }}
-            onClick={onClose}
+            onClick={handleClose}
           >
             {/* Modal Content */}
             <motion.div
@@ -458,7 +521,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                   </div>
                   
                   <motion.button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="text-gray-500 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition-all flex-shrink-0"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -494,32 +557,83 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                         </div>
                       </div>
                       
-                      <motion.button
+                      <div className="flex gap-3">
+                        {/* Back Button */}
+                        {currentStep > 1 && (
+                          <motion.button
+                            type="button"
+                            onClick={prevStep}
+                            className="px-5 py-3 text-gray-400 bg-[#1a1a1a] hover:bg-[#2a2a2a] hover:text-white border border-gray-700 rounded-lg transition-all font-mono"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              </svg>
+                              <span>Back</span>
+                            </div>
+                          </motion.button>
+                        )}
+
+                        {/* Cancel Button */}
+                        <motion.button
+                          type="button"
+                          onClick={handleClose}
+                          className="px-5 py-3 text-gray-400 bg-[#1a1a1a] hover:bg-[#2a2a2a] hover:text-white border border-gray-700 rounded-lg transition-all font-mono"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          Cancel
+                        </motion.button>
+                        
+                        {/* Next/Submit Button */}
+                        <motion.button
                           type="submit"
-                          className="px-8 py-3 font-mono font-bold rounded-lg transition-all shadow-lg relative overflow-hidden"
+                          disabled={isSubmitting}
+                          className="px-8 py-3 font-mono font-bold rounded-lg transition-all shadow-lg relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ 
                             background: `linear-gradient(135deg, #00ff87, #00e67a)`,
                             color: '#000000',
                             boxShadow: `0 10px 25px -5px rgba(0, 255, 135, 0.3), 0 0 0 1px rgba(0, 255, 135, 0.1)`
                           }}
-                          whileHover={{ scale: 1.02, y: -1 }}
-                          whileTap={{ scale: 0.98 }}
+                          whileHover={!isSubmitting ? { scale: 1.02, y: -1 } : {}}
+                          whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                         >
                           <div className="flex items-center gap-2">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
-                            <span>Submit Protocol</span>
+                            {isSubmitting ? (
+                              <>
+                                <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                                <span>Submitting...</span>
+                              </>
+                            ) : currentStep === FORM_STEPS.length ? (
+                              <>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                                <span>Submit Protocol</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Continue</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </>
+                            )}
                           </div>
                           
                           {/* Animated glow effect */}
-                          <div 
-                            className="absolute inset-0 rounded-lg opacity-20 animate-pulse"
-                            style={{ 
-                              background: `radial-gradient(circle at center, #00ff87, transparent)` 
-                            }} 
-                          />
+                          {!isSubmitting && (
+                            <div 
+                              className="absolute inset-0 rounded-lg opacity-20 animate-pulse"
+                              style={{ 
+                                background: `radial-gradient(circle at center, #00ff87, transparent)` 
+                              }} 
+                            />
+                          )}
                         </motion.button>
+                      </div>
                     </div>
                   </div>
                 </form>

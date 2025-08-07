@@ -1,14 +1,15 @@
-import type { ProtocolToken, SortOption, SortOrder, LogoSize } from '../constants';
+import type { DAOToken, ProtocolToken, SortOption, SortOrder, LogoSize } from '../constants';
 
 // Re-export types from constants for easier imports
-export type { ProtocolToken, SortOption, SortOrder, LogoSize };
+export type { DAOToken, ProtocolToken, SortOption, SortOrder, LogoSize };
 
 /**
  * Core data interfaces
  */
 
 export interface BuybackData {
-  protocol: string;
+  dao: string;
+  protocol: string; // deprecated, use dao instead
   token: string;
   totalRepurchased: number;
   totalValueUSD: number;
@@ -19,6 +20,8 @@ export interface BuybackData {
   monthlyData?: MonthlyBuyback[];
   // Aave-specific buyback data from TokenLogic
   aaveBuybacks?: AaveBuybackData;
+  // PumpFun-specific buyback data from fees.pump.fun
+  pumpFunBuybacks?: PumpFunBuybackData;
 }
 
 /**
@@ -80,7 +83,7 @@ export interface MonthlyBuyback {
   valueUSD: number;
 }
 
-export interface ProtocolConfig {
+export interface DAOConfig {
   name: string;
   token: string;
   color: string;
@@ -88,9 +91,13 @@ export interface ProtocolConfig {
   coingeckoId: string;
 }
 
+// Backward compatibility
+export interface ProtocolConfig extends DAOConfig {}
+
 export interface HistoricalDataPoint {
   timestamp: string;
-  protocol: string;
+  dao: string;
+  protocol: string; // deprecated, use dao instead
   price: number;
   volume: number;
   marketCap: number;
@@ -103,7 +110,7 @@ export interface HistoricalDataPoint {
 export interface ChartDataPoint {
   timestamp: string;
   buybacks: number;      // USD value of buybacks
-  revenue: number;       // Protocol revenue  
+  revenue: number;       // DAO revenue  
   tokensBought: number;  // Number of tokens bought back
   change24h: number;
 }
@@ -112,6 +119,13 @@ export interface ChartDataPoint {
  * Component props interfaces
  */
 
+export interface DAOLogoProps {
+  dao: string;
+  size?: LogoSize;
+  className?: string;
+}
+
+// Backward compatibility
 export interface ProtocolLogoProps {
   protocol: string;
   size?: LogoSize;
@@ -135,6 +149,13 @@ export interface MetricCardProps {
   loading?: boolean;
 }
 
+export interface DAOCardProps {
+  dao: BuybackData;
+  isSelected?: boolean;
+  onClick?: () => void;
+}
+
+// Backward compatibility
 export interface ProtocolCardProps {
   protocol: BuybackData;
   isSelected?: boolean;
@@ -171,7 +192,8 @@ export interface MCPResponse {
 
 export interface BuybackRecord {
   id: number;
-  protocol: string;
+  dao: string;
+  protocol: string; // deprecated, use dao instead
   token: string;
   timestamp: string;
   total_repurchased: number;
@@ -186,7 +208,8 @@ export interface BuybackRecord {
 
 export interface HistoricalChart {
   id: number;
-  protocol: string;
+  dao: string;
+  protocol: string; // deprecated, use dao instead
   token: string;
   timestamp: string;
   value_usd: number;
@@ -202,7 +225,8 @@ export interface HistoricalChart {
 export interface DashboardState {
   buybackData: BuybackData[];
   historicalData: HistoricalDataPoint[];
-  selectedProtocol: string;
+  selectedDAO: string;
+  selectedProtocol: string; // deprecated, use selectedDAO instead
   sortBy: SortOption;
   sortOrder: SortOrder;
   loading: boolean;
@@ -211,7 +235,8 @@ export interface DashboardState {
 }
 
 export interface UserPreferences {
-  selectedProtocol: string;
+  selectedDAO: string;
+  selectedProtocol: string; // deprecated, use selectedDAO instead
   sortBy: SortOption;
   sortOrder: SortOrder;
   theme: 'dark' | 'light';
@@ -283,6 +308,51 @@ export type DeepPartial<T> = {
 };
 
 export type ValueOf<T> = T[keyof T];
+
+/**
+ * PumpFun buyback data structure from fees.pump.fun API
+ */
+export interface PumpFunBuybackData {
+  // Total aggregated data
+  totalBuybackSol: number;
+  totalBuybackUsd: number;
+  totalPumpTokensBought: number;
+  totalDays: number;
+  lastUpdated: string;
+  
+  // Daily breakdown
+  dailyBuybacks: Record<string, PumpFunDailyData>;
+  
+  // Fee aggregates
+  totalPumpFeesUsd: number;
+  totalPumpFeesSol: number;
+  totalPumpAmmFeesUsd: number;
+  totalPumpAmmFeesSol: number;
+  totalFeesUsd: number;
+  totalFeesSol: number;
+  
+  // Volume aggregates
+  totalPumpVolumeUsd: number;
+  totalPumpAmmVolumeUsd: number;
+  totalVolumeUsd: number;
+}
+
+export interface PumpFunDailyData {
+  buybackSol: number;
+  buybackUsd: number;
+  transactionCount: number;
+  pumpTokensBought: number;
+  lastUpdated: string;
+  pumpFeesUsd: number;
+  pumpFeesSol: number;
+  pumpAmmFeesUsd: number;
+  pumpAmmFeesSol: number;
+  totalFeesUsd: number;
+  totalFeesSol: number;
+  pumpVolumeUsd: number;
+  pumpAmmVolumeUsd: number;
+  totalVolumeUsd: number;
+}
 
 /**
  * Event handler types

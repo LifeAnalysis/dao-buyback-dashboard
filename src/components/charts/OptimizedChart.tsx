@@ -38,7 +38,7 @@ const CHART_TYPE_OPTIONS: Array<{
   description: string;
 }> = [
   { key: 'buybacks', label: 'Buyback Value', color: '#00ff87', description: 'Total USD value of token buybacks' },
-  { key: 'revenue', label: 'Protocol Revenue', color: '#16a34a', description: 'Revenue generated from protocol fees' },
+  { key: 'revenue', label: 'DAO Revenue', color: '#16a34a', description: 'Revenue generated from DAO fees' },
   { key: 'tokensBought', label: 'Tokens Bought', color: '#2563eb', description: 'Number of tokens purchased back' }
 ];
 

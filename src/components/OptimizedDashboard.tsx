@@ -63,7 +63,7 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
       <div className="bg-gradient-to-r from-[#0a0a0a] via-[#111] to-[#0a0a0a] rounded-xl border border-gray-800/50 p-6">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           <div className="group text-center">
-            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">Protocols</div>
+                            <div className="text-xs text-gray-500 mb-1 font-mono uppercase tracking-wide">DAOs</div>
             <div className="font-bold text-white text-2xl font-mono group-hover:text-green-400 transition-colors">
               {stats.totalCoins}
             </div>
@@ -124,7 +124,7 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: ANIMATION_DELAYS.LONG, duration: ANIMATION_DURATIONS.NORMAL }}
   >
-    <h3 className="text-lg font-semibold text-white mb-4 font-mono">Select Protocol</h3>
+    <h3 className="text-lg font-semibold text-white mb-4 font-mono">Select DAO</h3>
     <div className="space-y-2">
       {protocols.map((protocol) => (
         <button
@@ -252,7 +252,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
       <div className="dark-card overflow-hidden">
         <div className="px-6 py-4" style={{ borderBottom: '1px solid #1a1a1a' }}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h3 className="text-lg font-semibold text-white font-mono">Protocol Buyback Rankings</h3>
+            <h3 className="text-lg font-semibold text-white font-mono">DAO Buyback Rankings</h3>
             
             {/* Filter Controls */}
             <div className="flex flex-col sm:flex-row gap-3">
@@ -270,7 +270,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   onBlur={(e) => e.target.style.borderColor = '#4b5563'}
                 >
                   <option value="buybackValue">Buyback Value</option>
-                  <option value="revenue">Protocol Revenue</option>
+                  <option value="revenue">DAO Revenue</option>
                   <option value="tokensBought">Tokens Bought</option>
                   <option value="change">Supply Reduced</option>
                 </select>
@@ -304,7 +304,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   #
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider font-mono">
-                  Protocol
+                  DAO
                 </th>
                 <th 
                   className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer hover:text-white transition-colors font-mono"
@@ -320,7 +320,7 @@ const ProtocolTable = React.memo<ProtocolTableProps>(({
                   onClick={() => onSort('volume')}
                 >
                   <div className="flex items-center gap-1">
-                    Protocol Revenue
+                    DAO Revenue
                     <SortIcon column="volume" />
                   </div>
                 </th>

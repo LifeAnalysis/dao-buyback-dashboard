@@ -4,16 +4,16 @@
  */
 
 // ===========================
-// PROTOCOL CONFIGURATION
+// DAO CONFIGURATION
 // ===========================
 
-export const PROTOCOL_TOKENS = [
+export const DAO_TOKENS = [
   'HYPE', 'JUP', 'AAVE', 'JTO', 'PUMP', 'DBR', 'FLUID'
 ] as const;
 
-export type ProtocolToken = typeof PROTOCOL_TOKENS[number];
+export type DAOToken = typeof DAO_TOKENS[number];
 
-export const PROTOCOL_COLORS = {
+export const DAO_COLORS = {
   Hyperliquid: '#00D4AA',
   Jupiter: '#FFA500', 
   Aave: '#B6509E',
@@ -124,7 +124,7 @@ export const LOCAL_STORAGE_KEYS = {
   USER_PREFERENCES: 'dao_user_preferences',
 } as const;
 
-export const EXPECTED_PROTOCOL_COUNT = 7;
+export const EXPECTED_DAO_COUNT = 7;
 
 // ===========================
 // ANIMATION CONFIGURATION
@@ -199,8 +199,8 @@ export const BRANDING = {
 // ===========================
 
 export const VALIDATION_LIMITS = {
-  MIN_PROTOCOL_COUNT: 1,
-  MAX_PROTOCOL_COUNT: 20,
+  MIN_DAO_COUNT: 1,
+  MAX_DAO_COUNT: 20,
   MIN_PRICE: 0.000001,
   MAX_PRICE: 1000000,
   MIN_VOLUME: 0,
@@ -223,3 +223,13 @@ export const NUMBER_FORMATS = {
 // ===========================
 
 export const LEGAL_DISCLAIMER = `Any references to token purchases are for informational purposes only, and only describe historical activity. This information should not be understood as a commitment to future token purchases for any reason. Any purchases may have the effect of preventing or retarding a decline in the market price of tokens and may stabilize, maintain or otherwise affect the market price of the tokens. As a result, the market price of the tokens may be higher than the price that otherwise might exist. Entities affiliated with the pump platform may purchase or sell tokens from time to time, but are not under no obligation to do so. If any purchases occur in the future, any such activity may be initiated, suspended, modified, or discontinued at any time, with or without notice. No token purchaser, holder or seller should rely on past purchases as an indication of future token purchases.` as const;
+
+// ===========================
+// BACKWARD COMPATIBILITY
+// ===========================
+
+// Maintain backward compatibility for existing code
+export const PROTOCOL_TOKENS = DAO_TOKENS;
+export type ProtocolToken = DAOToken;
+export const PROTOCOL_COLORS = DAO_COLORS;
+export const EXPECTED_PROTOCOL_COUNT = EXPECTED_DAO_COUNT;
