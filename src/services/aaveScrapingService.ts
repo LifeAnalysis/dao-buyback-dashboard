@@ -1,4 +1,4 @@
-import { AaveBuybackData, AaveBuybackChartPoint, AaveBuybackTransaction } from '../types';
+import { AaveBuybackData } from '../types';
 
 /**
  * Service for scraping Aave buyback data from TokenLogic
@@ -207,7 +207,7 @@ export class AaveScrapingService {
   }
 
   /**
-   * Transform raw data to our AaveBuybackData interface
+   * Transform raw data to our AaveBuybackData interface (optimized for chart data only)
    */
   private transformToAaveBuybackData(data: any): Partial<AaveBuybackData> {
     return {
@@ -221,37 +221,14 @@ export class AaveScrapingService {
         netProfitLossPercent: data.netProfitLossPercent || data.net_profit_loss_percent || 0,
         averageAavePrice: data.averageAavePrice || data.average_aave_price || 0,
       },
-      holdingBalance: {
-        aave: data.holdingBalance?.aave || data.holding_balance?.aave || 0,
-        usdt: data.holdingBalance?.usdt || data.holding_balance?.usdt || 0,
-        aEthUSDT: data.holdingBalance?.aEthUSDT || data.holding_balance?.aEthUSDT || 0,
-        usdc: data.holdingBalance?.usdc || data.holding_balance?.usdc || 0,
-        aEthUSDC: data.holdingBalance?.aEthUSDC || data.holding_balance?.aEthUSDC || 0,
-        eth: data.holdingBalance?.eth || data.holding_balance?.eth || 0,
-      },
-      fundingDetails: {
-        usdt: {
-          allowance: data.fundingDetails?.usdt?.allowance || 0,
-          remaining: data.fundingDetails?.usdt?.remaining || 0,
-          transferred: data.fundingDetails?.usdt?.transferred || 0,
-        },
-        usdc: {
-          allowance: data.fundingDetails?.usdc?.allowance || 0,
-          remaining: data.fundingDetails?.usdc?.remaining || 0,
-          transferred: data.fundingDetails?.usdc?.transferred || 0,
-        },
-      },
-      cumulativeChart: data.cumulativeChart || [],
-      transactions: data.transactions || [],
     };
   }
 
   /**
-   * Generate mock data based on realistic Aave buyback patterns
+   * Generate mock data based on realistic Aave buyback patterns (optimized for chart data only)
    * This serves as fallback when scraping fails
    */
   private generateMockAaveData(): AaveBuybackData {
-    const now = new Date();
     const currentAavePrice = 380 + Math.random() * 40; // Realistic AAVE price range
     const totalPurchased = 25000 + Math.random() * 10000;
     const avgPrice = currentAavePrice * (0.85 + Math.random() * 0.3); // Historical avg
@@ -269,79 +246,10 @@ export class AaveScrapingService {
         netProfitLossPercent: ((currentValue - costOfPurchase) / costOfPurchase) * 100,
         averageAavePrice: avgPrice,
       },
-      holdingBalance: {
-        aave: totalPurchased,
-        usdt: 1500000 + Math.random() * 500000,
-        aEthUSDT: 2800000 + Math.random() * 700000,
-        usdc: 1200000 + Math.random() * 300000,
-        aEthUSDC: 2200000 + Math.random() * 800000,
-        eth: 450 + Math.random() * 150,
-      },
-      fundingDetails: {
-        usdt: {
-          allowance: 5000000,
-          remaining: 3200000 + Math.random() * 800000,
-          transferred: 1800000 + Math.random() * 200000,
-        },
-        usdc: {
-          allowance: 4500000,
-          remaining: 2800000 + Math.random() * 700000,
-          transferred: 1700000 + Math.random() * 300000,
-        },
-      },
-      cumulativeChart: this.generateMockChartData(),
-      transactions: this.generateMockTransactions(),
     };
   }
 
-  /**
-   * Generate mock chart data for demonstration
-   */
-  private generateMockChartData(): AaveBuybackChartPoint[] {
-    const points: AaveBuybackChartPoint[] = [];
-    const startDate = new Date('2023-01-01');
-    const now = new Date();
-    let cumulativeValue = 0;
-
-    for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + 7)) {
-      const weeklyBuyback = Math.random() * 50000 + 10000; // Random weekly buyback
-      cumulativeValue += weeklyBuyback;
-      
-      points.push({
-        timestamp: d.toISOString(),
-        cumulativeValue: cumulativeValue,
-        dailyAmount: weeklyBuyback / 7,
-      });
-    }
-
-    return points;
-  }
-
-  /**
-   * Generate mock transaction data
-   */
-  private generateMockTransactions(): AaveBuybackTransaction[] {
-    const transactions: AaveBuybackTransaction[] = [];
-    const startDate = new Date('2023-01-01');
-    const now = new Date();
-
-    for (let i = 0; i < 50; i++) {
-      const randomDate = new Date(startDate.getTime() + Math.random() * (now.getTime() - startDate.getTime()));
-      const aaveAmount = Math.random() * 1000 + 100;
-      const price = 300 + Math.random() * 150;
-      
-      transactions.push({
-        txHash: `0x${Math.random().toString(16).substr(2, 64)}`,
-        timestamp: randomDate.toISOString(),
-        aaveAmount: aaveAmount,
-        usdValue: aaveAmount * price,
-        price: price,
-        funding: Math.random() > 0.5 ? 'USDT' : 'USDC',
-      });
-    }
-
-    return transactions.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-  }
+  // Removed chart and transaction generation methods as they are no longer needed for optimized chart-only data
 
   /**
    * Main method to get Aave buyback data

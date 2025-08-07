@@ -19,7 +19,7 @@ import { Footer } from './layout/Footer';
 import { OptimizedChart } from './charts/OptimizedChart';
 import { ProtocolLogoImage } from './ProtocolLogo';
 import { SubmissionModal } from './SubmissionModal';
-import { AaveMetrics } from './AaveMetrics';
+
 import type { 
   BuybackData, 
   GlobalStats, 
@@ -593,10 +593,7 @@ export const OptimizedDashboard: React.FC = () => {
             onSortOrderChange={(sortOrder) => setState(prev => ({ ...prev, sortOrder }))}
           />
 
-          {/* Aave TokenLogic Integration Showcase */}
-          <div className="mt-8">
-            <AaveMetrics />
-          </div>
+
         </div>
       </div>
 

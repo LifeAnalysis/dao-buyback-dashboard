@@ -405,8 +405,9 @@ export const OptimizedChart = memo<ChartProps>(({
                 yAxisId="secondary"
                 dataKey="revenue"
                 fill="#16a34a"
-                opacity={0.4}
+                opacity={0.3}
                 radius={[2, 2, 0, 0]}
+                maxBarSize={20}
               />
               
               <Area
