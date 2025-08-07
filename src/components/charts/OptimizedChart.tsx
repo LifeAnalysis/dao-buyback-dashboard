@@ -110,77 +110,62 @@ const ChartHeader = memo<ChartHeaderProps>(({
   onTimeframeChange
 }) => {
   const isPositive = change24h >= 0;
+  const currentMetric = CHART_TYPE_OPTIONS.find(option => option.key === activeChart);
   
   return (
-    <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
-      {/* Title and current value */}
-      <div>
-        <h3 className="text-xl font-bold text-white mb-2 font-mono">{title}</h3>
-        <div className="flex items-center gap-4">
-          <span className="text-2xl font-bold text-white font-mono">
-            {(() => {
-              const chartType = activeChart as ChartType;
-              const formatter = chartType === 'tokensBought' ? formatVolume : formatCurrency;
-              return formatter(currentValue);
-            })()}
-          </span>
-          <span 
-            className={`text-sm font-medium px-2 py-1 rounded font-mono ${
-              isPositive 
-                ? `text-[${CHART_COLORS.PRIMARY}] bg-[${CHART_COLORS.PRIMARY}]/10` 
-                : 'text-red-400 bg-red-900/30'
-            }`}
-          >
-            {isPositive ? '+' : ''}{change24h.toFixed(2)}%
-          </span>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* Chart type selector */}
-        <div className="flex flex-wrap gap-2">
-          {CHART_TYPE_OPTIONS.map(({ key, label, color, description }) => (
-            <button
-              key={key}
-              onClick={() => onChartTypeChange(key)}
-              title={description}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors font-mono ${
-                activeChart === key
-                  ? 'text-black border'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-              style={
-                activeChart === key 
-                  ? { 
-                      background: CHART_COLORS.PRIMARY, 
-                      borderColor: CHART_COLORS.PRIMARY 
-                    }
-                  : { background: THEME_COLORS.DARK_BLACK }
-              }
-            >
-              {label}
-            </button>
-          ))}
+    <div className="space-y-6">
+      {/* Title and Metric Overview */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold text-gray-400 font-mono tracking-wide">
+            {title}
+          </h3>
+          <div className="flex items-baseline gap-3">
+            <span className="text-3xl font-bold text-white font-mono tracking-tight">
+              {(() => {
+                const chartType = activeChart as ChartType;
+                const formatter = chartType === 'tokensBought' ? formatVolume : formatCurrency;
+                return formatter(currentValue);
+              })()}
+            </span>
+            <div className="flex items-center gap-2">
+              <span 
+                className={`inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full font-mono ${
+                  isPositive 
+                    ? 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20' 
+                    : 'text-red-400 bg-red-400/10 border border-red-400/20'
+                }`}
+              >
+                <svg className={`w-3 h-3 mr-1 ${isPositive ? '' : 'rotate-180'}`} fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                {isPositive ? '+' : ''}{change24h.toFixed(2)}%
+              </span>
+              <span className="text-xs text-gray-500 font-mono">24h</span>
+            </div>
+          </div>
+          {currentMetric && (
+            <p className="text-sm text-gray-400 mt-1">{currentMetric.description}</p>
+          )}
         </div>
 
-        {/* Timeframe selector */}
-        <div 
-          className="flex rounded-lg p-1" 
-          style={{ background: THEME_COLORS.DARK_BLACK }}
-        >
+        {/* Timeframe Selector - Elevated Design */}
+        <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl p-1 flex gap-1">
           {TIMEFRAME_OPTIONS.map((tf) => (
             <button
               key={tf}
               onClick={() => onTimeframeChange(tf)}
-              className={`px-3 py-1 text-xs font-medium rounded transition-colors font-mono ${
+              className={`relative px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 font-mono ${
                 timeframe === tf
-                  ? 'text-black shadow-sm'
-                  : 'text-gray-300 hover:text-white'
+                  ? 'text-black shadow-lg'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
               }`}
               style={
-                timeframe === tf 
-                  ? { background: CHART_COLORS.PRIMARY } 
+                timeframe === tf
+                  ? {
+                      backgroundColor: CHART_COLORS.PRIMARY,
+                      boxShadow: `0 0 20px ${CHART_COLORS.PRIMARY}40`,
+                    }
                   : {}
               }
             >
@@ -188,6 +173,61 @@ const ChartHeader = memo<ChartHeaderProps>(({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Metrics Selector - Card Style Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {CHART_TYPE_OPTIONS.map(({ key, label, color, description }) => (
+          <button
+            key={key}
+            onClick={() => onChartTypeChange(key)}
+            className={`group relative overflow-hidden rounded-xl p-4 transition-all duration-300 border ${
+              activeChart === key
+                ? 'border-opacity-50 shadow-xl'
+                : 'border-gray-800 hover:border-gray-700 hover:bg-gray-900/30'
+            }`}
+            style={
+              activeChart === key
+                ? {
+                    borderColor: color,
+                    backgroundColor: `${color}0a`,
+                    boxShadow: `0 8px 32px ${color}20`,
+                  }
+                : {}
+            }
+          >
+            {/* Background gradient effect */}
+            {activeChart === key && (
+              <div 
+                className="absolute inset-0 opacity-5 bg-gradient-to-br from-transparent via-current to-transparent"
+                style={{ color }}
+              />
+            )}
+            
+            <div className="relative">
+              <div className="flex items-center justify-between mb-2">
+                <div className={`w-3 h-3 rounded-full ${activeChart === key ? 'shadow-lg' : ''}`} style={{ backgroundColor: color }} />
+                <div className={`text-xs font-mono transition-colors ${
+                  activeChart === key ? 'text-white' : 'text-gray-500 group-hover:text-gray-400'
+                }`}>
+                  {activeChart === key ? 'ACTIVE' : 'SELECT'}
+                </div>
+              </div>
+              
+              <h4 className={`text-sm font-semibold transition-colors font-mono ${
+                activeChart === key ? 'text-white' : 'text-gray-300 group-hover:text-white'
+              }`}>
+                {label}
+              </h4>
+              
+              <p className={`text-xs mt-1 transition-colors ${
+                activeChart === key ? 'text-gray-300' : 'text-gray-500 group-hover:text-gray-400'
+              }`}>
+                {description}
+              </p>
+            </div>
+          </button>
+        ))}
       </div>
     </div>
   );

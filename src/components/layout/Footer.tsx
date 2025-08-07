@@ -58,7 +58,56 @@ const LegalDisclaimer = memo(() => (
 
 LegalDisclaimer.displayName = 'LegalDisclaimer';
 
+/**
+ * X/Twitter icon component
+ */
+const XIcon = memo(() => (
+  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+));
 
+XIcon.displayName = 'XIcon';
+
+/**
+ * Attribution section
+ */
+const Attribution = memo(() => (
+  <motion.div 
+    className="border-t border-gray-800 py-6"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ 
+      duration: ANIMATION_DURATIONS.NORMAL,
+      delay: ANIMATION_DELAYS.VERY_LONG + 0.2 
+    }}
+  >
+    <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+      <span>Built by</span>
+      <a 
+        href="https://exagroup.xyz" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-[#00ff87] hover:text-[#00ff87]/80 transition-colors duration-200"
+      >
+        exagroup.xyz
+      </a>
+      <span>•</span>
+      <a 
+        href="https://x.com/exagroupxyz" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-1"
+        aria-label="Follow @exagroupxyz on X"
+      >
+        <XIcon />
+        @exagroupxyz
+      </a>
+    </div>
+  </motion.div>
+));
+
+Attribution.displayName = 'Attribution';
 
 /**
  * Main Footer Component
@@ -80,6 +129,8 @@ export const Footer = memo<FooterProps>(({
           </div>
         )}
         
+        {/* Attribution */}
+        <Attribution />
 
       </div>
     </footer>

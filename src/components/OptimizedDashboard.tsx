@@ -19,6 +19,7 @@ import { Header } from './layout/Header';
 import { Footer } from './layout/Footer';
 import { OptimizedChart } from './charts/OptimizedChart';
 import { ProtocolLogoImage } from './ProtocolLogo';
+import { SubmissionModal } from './SubmissionModal';
 import type { 
   BuybackData, 
   GlobalStats, 
@@ -400,6 +401,7 @@ export const OptimizedDashboard: React.FC = () => {
     lastUpdated: null,
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dataService = OptimizedDataService.getInstance();
 
   // Memoized calculations
@@ -483,6 +485,21 @@ export const OptimizedDashboard: React.FC = () => {
       sortBy: column,
       sortOrder: prev.sortBy === column && prev.sortOrder === 'desc' ? 'asc' : 'desc',
     }));
+  }, []);
+
+  const handleModalOpen = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  const handleSubmission = useCallback((data: any) => {
+    console.log('Entity submission:', data);
+    // Here you would typically send the data to your backend
+    // For now, we'll just log it
+    alert('Thank you for your submission! We will review your entity and get back to you.');
   }, []);
 
   // Effects
@@ -578,6 +595,37 @@ export const OptimizedDashboard: React.FC = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Submission Modal */}
+      <SubmissionModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSubmit={handleSubmission}
+      />
+
+      {/* Floating Submit Button */}
+      <button
+        onClick={handleModalOpen}
+        className="fixed bottom-8 right-8 z-40 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 group"
+        title="Submit Your Entity"
+      >
+        <svg 
+          className="w-6 h-6 transition-transform group-hover:rotate-12" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M12 4v16m8-8H4" 
+          />
+        </svg>
+        <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-2 py-1 rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Join the Movement
+        </span>
+      </button>
     </div>
   );
 };

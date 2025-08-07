@@ -1,15 +1,15 @@
 import React from 'react';
-import { StrategicDashboard } from './components/StrategicDashboard';
+import { OptimizedDashboard } from './components/OptimizedDashboard';
 import './index.css';
 
 /**
  * Main Application Component
- * Uses the Strategic Dashboard inspired by StrategicETHReserve.xyz
+ * Uses the optimized, modular dashboard architecture
  */
 function App() {
   return (
     <div className="App">
-      <StrategicDashboard />
+      <OptimizedDashboard />
     </div>
   );
 }
