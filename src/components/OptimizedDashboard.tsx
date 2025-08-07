@@ -158,7 +158,7 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
         <button
           key={protocol.protocol}
           onClick={() => onProtocolSelect(protocol.protocol)}
-          className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
+          className={`w-full text-left p-2 rounded-md transition-all duration-200 ${
             selectedProtocol === protocol.protocol
               ? 'border bg-opacity-15 hover:bg-opacity-25'
               : 'border border-gray-700/50 hover:border-gray-600/70 hover:bg-gray-800/30'
@@ -172,35 +172,29 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
               : {}
           }
         >
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <div className="flex-shrink-0">
-                <ProtocolLogoImage protocol={protocol.protocol} size="sm" />
+                <ProtocolLogoImage protocol={protocol.protocol} size="xs" />
               </div>
-              <div className="flex-1">
-                <div className="font-medium text-white text-sm leading-tight">
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-white text-xs leading-tight truncate">
                   {protocol.protocol}
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-gray-400 leading-none">
                   {protocol.token}
                 </div>
               </div>
             </div>
-            <div className="flex justify-between items-center text-xs">
-              <div className="text-left">
-                <div className="text-gray-500 mb-0.5">Value</div>
-                <div className="font-medium text-white font-mono">
-                  {formatCurrency(protocol.totalValueUSD)}
-                </div>
+            <div className="text-right flex-shrink-0">
+              <div className="font-medium text-white font-mono text-xs leading-tight">
+                {formatCurrency(protocol.totalValueUSD)}
               </div>
-              <div className="text-right">
-                <div className="text-gray-500 mb-0.5">Supply -</div>
-                <div 
-                  className="font-medium"
-                  style={{ color: THEME_COLORS.PRIMARY_GREEN }}
-                >
-                  {protocol.circulatingSupplyPercent}%
-                </div>
+              <div 
+                className="text-xs leading-none"
+                style={{ color: THEME_COLORS.PRIMARY_GREEN }}
+              >
+                +{protocol.circulatingSupplyPercent}%
               </div>
             </div>
           </div>
