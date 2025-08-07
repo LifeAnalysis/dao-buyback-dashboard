@@ -30,14 +30,18 @@ const LiveStatusIndicator = memo(({ isOnline = true }: { isOnline?: boolean }) =
 LiveStatusIndicator.displayName = 'LiveStatusIndicator';
 
 /**
- * Brand logo component with sophisticated design
+ * Brand logo component with sophisticated design - now clickable!
  */
 const BrandLogo = memo(() => (
-  <div className="flex items-center gap-3">
+  <button 
+    className="flex items-center gap-3 group cursor-pointer transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 rounded-lg p-2 -m-2"
+    onClick={() => window.location.reload()}
+    aria-label="Refresh Dashboard"
+  >
     <div className="relative">
       {/* Main logo container */}
       <div 
-        className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden" 
+        className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden group-hover:shadow-xl transition-all duration-300" 
         style={{ 
           background: `linear-gradient(135deg, ${THEME_COLORS.PRIMARY_GREEN}, ${THEME_COLORS.SECONDARY_GREEN})` 
         }}
@@ -48,7 +52,7 @@ const BrandLogo = memo(() => (
           height="28" 
           viewBox="0 0 24 24" 
           fill="none" 
-          className="text-black"
+          className="text-black group-hover:scale-110 transition-transform duration-300"
         >
           {/* Building/Treasury structure */}
           <rect x="2" y="8" width="20" height="12" rx="1" fill="currentColor" opacity="0.9"/>
@@ -66,7 +70,7 @@ const BrandLogo = memo(() => (
         
         {/* Animated glow effect */}
         <div 
-          className="absolute inset-0 rounded-xl opacity-20 animate-pulse"
+          className="absolute inset-0 rounded-xl opacity-20 animate-pulse group-hover:opacity-30 transition-opacity duration-300"
           style={{ 
             background: `radial-gradient(circle at center, ${THEME_COLORS.PRIMARY_GREEN}, transparent)` 
           }} 
@@ -75,16 +79,24 @@ const BrandLogo = memo(() => (
       
       {/* Small indicator dot */}
       <div 
-        className="absolute -top-1 -right-1 w-3 h-3 rounded-full animate-pulse"
+        className="absolute -top-1 -right-1 w-3 h-3 rounded-full animate-pulse group-hover:w-4 group-hover:h-4 transition-all duration-300"
         style={{ background: THEME_COLORS.PRIMARY_GREEN }}
       />
     </div>
     
     <div>
-      <h1 className="text-2xl font-bold text-white font-mono tracking-tight">{BRANDING.APP_NAME}</h1>
-      <p className="text-xs text-gray-400 font-mono tracking-wide">{BRANDING.TAGLINE}</p>
+      <h1 className="text-2xl font-bold text-white tracking-tight group-hover:text-green-300 transition-colors duration-300" 
+          style={{ fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+        {BRANDING.APP_NAME}
+      </h1>
+      {BRANDING.TAGLINE && (
+        <p className="text-xs text-gray-400 tracking-wide group-hover:text-gray-300 transition-colors duration-300"
+           style={{ fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+          {BRANDING.TAGLINE}
+        </p>
+      )}
     </div>
-  </div>
+  </button>
 ));
 
 BrandLogo.displayName = 'BrandLogo';

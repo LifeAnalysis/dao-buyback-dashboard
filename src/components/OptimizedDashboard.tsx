@@ -49,7 +49,9 @@ const GlobalStatsSection = React.memo<GlobalStatsProps>(({ stats }) => (
       <div className="text-center mb-6">
         <div className="flex items-center justify-center gap-2 mb-2">
           <span className="text-xl">🏛️</span>
-          <h1 className="text-xl font-bold text-white font-mono">DAO Treasury Analytics</h1>
+          <h1 className="text-xl font-bold text-white" style={{ fontFamily: '"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+            Treasury Analytics
+          </h1>
         </div>
         <p className="text-xs text-gray-400 max-w-2xl mx-auto">
           Strategic token buybacks across leading decentralized autonomous organizations

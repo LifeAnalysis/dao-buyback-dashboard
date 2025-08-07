@@ -188,8 +188,8 @@ export const THEME_COLORS = {
 // ===========================
 
 export const BRANDING = {
-  APP_NAME: 'DAOGecko',
-  TAGLINE: 'DAO Buybacks',
+  APP_NAME: 'DAOTreasuries',
+  TAGLINE: '',
   POWERED_BY: 'ExaGroup',
   DESCRIPTION: 'Explore comprehensive analytics on how decentralized autonomous organizations (DAOs) manage their treasuries through strategic token buybacks.',
 } as const;
