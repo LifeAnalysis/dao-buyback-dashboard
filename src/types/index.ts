@@ -17,6 +17,61 @@ export interface BuybackData {
   feeAllocationPercent: number;
   lastUpdated: string;
   monthlyData?: MonthlyBuyback[];
+  // Aave-specific buyback data from TokenLogic
+  aaveBuybacks?: AaveBuybackData;
+}
+
+/**
+ * Aave buyback data structure from TokenLogic API
+ */
+export interface AaveBuybackData {
+  totalAavePurchased: number;
+  latestAavePrice: number;
+  startDate: string;
+  buybackReturns: {
+    costOfPurchase: number;
+    currentValue: number;
+    netProfitLoss: number;
+    netProfitLossPercent: number;
+    averageAavePrice: number;
+  };
+  holdingBalance: {
+    aave: number;
+    usdt: number;
+    aEthUSDT: number;
+    usdc: number;
+    aEthUSDC: number;
+    eth: number;
+  };
+  fundingDetails: {
+    usdt: {
+      allowance: number;
+      remaining: number;
+      transferred: number;
+    };
+    usdc: {
+      allowance: number;
+      remaining: number;
+      transferred: number;
+    };
+  };
+  cumulativeChart: AaveBuybackChartPoint[];
+  transactions: AaveBuybackTransaction[];
+}
+
+export interface AaveBuybackChartPoint {
+  timestamp: string;
+  cumulativeValue: number;
+  dailyAmount?: number;
+}
+
+export interface AaveBuybackTransaction {
+  txHash: string;
+  timestamp: string;
+  aaveAmount: number;
+  usdValue: number;
+  price: number;
+  funding: 'USDT' | 'USDC';
 }
 
 export interface MonthlyBuyback {

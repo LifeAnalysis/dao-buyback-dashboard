@@ -23,12 +23,12 @@ import {
   ANIMATION_DELAYS,
   THEME_COLORS 
 } from '../../constants';
-import { formatCurrency, formatVolume, formatChartDate } from '../../utils/formatters';
+import { formatCurrency, formatVolume, formatChartDateByTimeframe } from '../../utils/formatters';
+import { filterDataByTimeframe, getOptimalTickCount, type TimeframeOption } from '../../utils/helpers';
 import type { ChartProps } from '../../types';
 
 // Chart type options focused on DAO treasury metrics
 type ChartType = 'buybacks' | 'revenue' | 'tokensBought';
-type TimeframeOption = '1D' | '7D' | '30D' | '90D' | '1Y';
 
 const TIMEFRAME_OPTIONS: TimeframeOption[] = ['1D', '7D', '30D', '90D', '1Y'];
 const CHART_TYPE_OPTIONS: Array<{
@@ -54,9 +54,10 @@ interface TooltipProps {
     dataKey: string;
   }>;
   label?: string;
+  timeframe?: TimeframeOption;
 }
 
-const CustomTooltip = memo<TooltipProps>(({ active, payload, label }) => {
+const CustomTooltip = memo<TooltipProps>(({ active, payload, label, timeframe = '30D' }) => {
   if (!active || !payload || !payload.length) return null;
 
   return (
@@ -69,7 +70,7 @@ const CustomTooltip = memo<TooltipProps>(({ active, payload, label }) => {
       }}
     >
       <p className="text-xs font-mono mb-2" style={{ color: CHART_COLORS.PRIMARY }}>
-        {label ? formatChartDate(label) : 'No date'}
+        {label ? formatChartDateByTimeframe(label, timeframe) : 'No date'}
       </p>
       {payload.map((entry, index: number) => (
         <p key={index} className="text-xs font-mono" style={{ color: entry.color }}>
@@ -258,8 +259,11 @@ export const OptimizedChart = memo<ChartProps>(({
       (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
-    const latest = sortedData[sortedData.length - 1];
-    const previous = sortedData[sortedData.length - 2];
+    // Filter data by selected timeframe
+    const filteredData = filterDataByTimeframe(sortedData, timeframe);
+
+    const latest = filteredData[filteredData.length - 1] || sortedData[sortedData.length - 1];
+    const previous = filteredData[filteredData.length - 2] || sortedData[sortedData.length - 2];
     
     const currentVal = latest?.[activeChart] || 0;
     const previousVal = previous?.[activeChart] || currentVal;
@@ -268,9 +272,9 @@ export const OptimizedChart = memo<ChartProps>(({
     return {
       currentValue: currentVal,
       change24h: change,
-      chartData: sortedData
+      chartData: filteredData.length > 0 ? filteredData : sortedData
     };
-  }, [data, activeChart]);
+  }, [data, activeChart, timeframe]);
 
   // Event handlers
   const handleChartTypeChange = useCallback((type: ChartType) => {

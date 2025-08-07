@@ -108,6 +108,50 @@ export const isWithinLastDays = (date: Date, days: number): boolean => {
 };
 
 /**
+ * Chart data filtering utilities
+ */
+
+export type TimeframeOption = '1D' | '7D' | '30D' | '90D' | '1Y';
+
+export const timeframeToDays = (timeframe: TimeframeOption): number => {
+  const timeframeMap: Record<TimeframeOption, number> = {
+    '1D': 1,
+    '7D': 7,
+    '30D': 30,
+    '90D': 90,
+    '1Y': 365,
+  };
+  return timeframeMap[timeframe];
+};
+
+export const filterDataByTimeframe = <T extends { timestamp: string }>(
+  data: T[],
+  timeframe: TimeframeOption
+): T[] => {
+  if (!data || data.length === 0) return [];
+  
+  const days = timeframeToDays(timeframe);
+  const now = new Date();
+  const cutoffDate = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+  
+  return data.filter(item => {
+    const itemDate = new Date(item.timestamp);
+    return itemDate >= cutoffDate;
+  });
+};
+
+export const getOptimalTickCount = (timeframe: TimeframeOption): number => {
+  const tickCountMap: Record<TimeframeOption, number> = {
+    '1D': 6,  // Every 4 hours
+    '7D': 7,  // Daily
+    '30D': 10, // Every 3 days
+    '90D': 12, // Weekly
+    '1Y': 12,  // Monthly
+  };
+  return tickCountMap[timeframe];
+};
+
+/**
  * Mathematical utilities
  */
 

@@ -103,6 +103,47 @@ export const formatChartDate = (timestamp: string | Date): string => {
 };
 
 /**
+ * Format chart date based on timeframe for optimal readability
+ */
+export const formatChartDateByTimeframe = (
+  timestamp: string | Date, 
+  timeframe: '1D' | '7D' | '30D' | '90D' | '1Y'
+): string => {
+  const d = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+  
+  switch (timeframe) {
+    case '1D':
+      return d.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: false
+      });
+    case '7D':
+      return d.toLocaleDateString('en-US', {
+        weekday: 'short',
+        day: 'numeric'
+      });
+    case '30D':
+      return d.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+    case '90D':
+      return d.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+    case '1Y':
+      return d.toLocaleDateString('en-US', {
+        month: 'short',
+        year: '2-digit'
+      });
+    default:
+      return formatChartDate(timestamp);
+  }
+};
+
+/**
  * Truncate text with ellipsis
  */
 export const truncateText = (text: string, maxLength: number): string => {
