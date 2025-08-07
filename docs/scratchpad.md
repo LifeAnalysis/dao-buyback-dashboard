@@ -8,6 +8,12 @@
 - **Started**: 2025-01-27
 - **Goal**: Replace mock Aave data with real buyback data from TokenLogic
 
+### 🧹 Codebase Cleanup and Refactoring
+- **Status**: Planning Complete - Ready for Implementation
+- **Implementation Plan**: [codebase-cleanup.md](implementation-plan/codebase-cleanup.md)
+- **Started**: 2025-01-27
+- **Goal**: Clean up redundant components, consolidate services, improve maintainability and documentation
+
 ## Lessons Learned
 
 - [2025-01-27] The TokenLogic Aave buybacks page at https://aave.tokenlogic.xyz/buybacks contains comprehensive buyback metrics that need to be scraped and integrated
