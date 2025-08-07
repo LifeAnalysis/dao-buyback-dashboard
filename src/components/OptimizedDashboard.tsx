@@ -177,15 +177,15 @@ const ProtocolSelector = React.memo<ProtocolSelectorProps>(({
               : {}
           }
         >
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3 flex-1">
               <ProtocolLogoImage protocol={protocol.protocol} size="md" />
-              <div className="min-w-0 flex-1">
-                <div className="font-medium text-white truncate">{protocol.protocol}</div>
-                <div className="text-sm text-gray-400 truncate">{protocol.token}</div>
+              <div className="flex-1">
+                <div className="font-medium text-white">{protocol.protocol}</div>
+                <div className="text-sm text-gray-400">{protocol.token}</div>
               </div>
             </div>
-            <div className="text-right flex-shrink-0 min-w-[100px]">
+            <div className="text-right flex-shrink-0 min-w-[120px]">
               <div className="font-medium text-white font-mono text-sm">
                 {formatCurrency(protocol.totalValueUSD)}
               </div>
@@ -618,7 +618,12 @@ export const OptimizedDashboard: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              DAO Treasury <span className="text-green-400">Analytics</span>
+            </h1>
+            <p className="text-gray-400 text-lg">
+              Strategic token buybacks across leading decentralized autonomous organizations
+            </p>
           </motion.div>
           <GlobalStatsSection stats={globalStats} />
         </div>
